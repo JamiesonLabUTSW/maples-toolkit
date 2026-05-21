@@ -1,0 +1,12 @@
+rubric:
+  - Category: "History Documentation"
+    QuestionName: "Documents the chief concern and key symptom timeline"
+    ScoringLogic:
+      Score1: "Chief concern and timeline are absent or unrelated to the case."
+      Score2: "Chief concern is documented but timeline is incomplete or unclear."
+      Score3: "Chief concern and key timeline details are documented with minor omissions."
+      Score4: "Chief concern and timeline are complete, organized, and clinically focused."
+    Mode: "note"
+    Technique: "Look for the presenting concern, onset, duration, and progression in the written note."
+    Purpose: "Evaluates whether the learner can document the core chronology needed for clinical reasoning."
+    AdditionalContext: ""

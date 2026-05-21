@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Station Grading"
+  short_description: "Prepare multimodal grading rubrics"
+  default_prompt: "Use $test-station-grading to prepare this rubric for video, audio, or note grading."

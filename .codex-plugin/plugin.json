@@ -1,0 +1,36 @@
+{
+  "name": "rubric-maker-skill",
+  "version": "0.1.0",
+  "description": "Codex skills from the UT REAL Project MAPLES research group for creating, importing, reviewing, transforming, validating, and formatting OSCE rubrics.",
+  "author": {
+    "name": "UT REAL Project MAPLES",
+    "url": "https://ut-real-ai-project-maples.com/"
+  },
+  "homepage": "https://ut-real-ai-project-maples.com/",
+  "license": "LicenseRef-UTSW-Academic-Research-Only",
+  "keywords": [
+    "codex",
+    "skills",
+    "rubrics",
+    "osce",
+    "medical-education"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Rubric Maker Skills",
+    "shortDescription": "OSCE rubric creation and review skills",
+    "longDescription": "A Codex plugin published by the UT REAL Project MAPLES research group containing skills for drafting post-encounter-note rubrics, importing source documents, reviewing OSCE rubrics, transforming rubrics, preparing test-station grading, validating rubric content, and designing practice simulator cases.",
+    "developerName": "UT REAL Project MAPLES",
+    "category": "Education",
+    "websiteURL": "https://ut-real-ai-project-maples.com/",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Draft a post-encounter-note rubric.",
+      "Convert this rubric source to YAML.",
+      "Review this OSCE rubric."
+    ]
+  }
+}

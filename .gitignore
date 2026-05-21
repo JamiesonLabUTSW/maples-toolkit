@@ -1,0 +1,21 @@
+# Local workspace and trial artifacts.
+trial/
+.copilot-tracking/
+
+# OS/editor temporary files.
+.DS_Store
+**/.DS_Store
+~$*.xlsx
+~$*.docx
+
+# Generated caches and environments.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Local generated outputs.
+*.log
+tmp/
+output/

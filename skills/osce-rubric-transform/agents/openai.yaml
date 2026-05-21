@@ -1,0 +1,4 @@
+interface:
+  display_name: "OSCE Rubric Transform"
+  short_description: "Adapt and enhance OSCE rubrics"
+  default_prompt: "Use $osce-rubric-transform to adapt or enhance this OSCE rubric for the new context."

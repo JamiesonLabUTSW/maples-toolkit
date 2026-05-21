@@ -1,0 +1,4 @@
+interface:
+  display_name: "OSCE Rubric Review"
+  short_description: "Review OSCE rubrics for quality gaps"
+  default_prompt: "Use $osce-rubric-review to review this OSCE rubric for alignment, safety, and scoring clarity."

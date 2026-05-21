@@ -1,0 +1,4 @@
+interface:
+  display_name: "Practice Simulator Case"
+  short_description: "Design live OSCE patient cases"
+  default_prompt: "Use $practice-simulator-case to create a live OSCE patient simulation case."

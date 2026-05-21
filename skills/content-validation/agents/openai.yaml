@@ -1,0 +1,4 @@
+interface:
+  display_name: "Content Validation"
+  short_description: "Validate rubric issues with model debate"
+  default_prompt: "Use $content-validation to validate this rubric issue and synthesize recommendations."
