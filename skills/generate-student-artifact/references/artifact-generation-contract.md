@@ -55,4 +55,4 @@ Optional fields:
 - Do not revise the rubric.
 - Do not create raw audio or video.
 - Do not invent hidden case facts inconsistent with the provided case.
-- Do not create an `observation_log` directly from case materials. It must be derived from a supplied or already generated transcript.
+- Do not create an `observation_log` directly from case materials. It must be derived from a supplied or already generated transcript. If no transcript exists, request or generate a `transcript` artifact first instead of returning an `observation_log`.

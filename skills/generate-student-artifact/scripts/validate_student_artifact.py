@@ -158,6 +158,16 @@ def validate_metadata(metadata: Any) -> list[ValidationIssue]:
             )
         )
 
+    if "source_transcript_summary" in metadata and not is_nonempty_string(
+        metadata["source_transcript_summary"]
+    ):
+        issues.append(
+            ValidationIssue(
+                "$.metadata.source_transcript_summary",
+                "must be a nonempty string when present",
+            )
+        )
+
     return issues
 
 
@@ -206,7 +216,7 @@ def validate_artifact(data: Any) -> list[ValidationIssue]:
     if "metadata" in data:
         issues.extend(validate_metadata(metadata))
         if artifact_type == "observation_log" and isinstance(metadata, dict):
-            if not is_nonempty_string(metadata.get("source_transcript_summary")):
+            if "source_transcript_summary" not in metadata:
                 issues.append(
                     ValidationIssue(
                         "$.metadata.source_transcript_summary",
