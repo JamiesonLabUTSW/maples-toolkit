@@ -22,6 +22,18 @@ Licensed under the UT Southwestern academic research use release terms in [LICEN
 
 This repository is packaged as a Codex CLI plugin and a Claude Code plugin. The plugin route is preferred for this bundle because it installs all seven related skills together and keeps runtime metadata in `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json`.
 
+### Supported Runtimes
+
+| Runtime | Support files | Notes |
+|---|---|---|
+| OpenAI Codex CLI | `.codex-plugin/plugin.json`, `skills/` | Codex loads the plugin through a marketplace entry and discovers bundled skills from the plugin root. |
+| Claude Code | `.claude-plugin/plugin.json`, `skills/` | Claude Code loads the plugin from a plugin source or local plugin directory and discovers bundled skills from the plugin root. |
+
+References:
+
+- OpenAI Codex plugin docs: https://developers.openai.com/codex/plugins/build
+- Claude Code plugin docs: https://github.com/anthropics/claude-code/tree/main/plugins
+
 ### Publisher Metadata
 
 Publisher identity is conveyed in runtime manifests and marketplace metadata:
@@ -121,13 +133,19 @@ Then add or update a personal marketplace entry at `$HOME/.agents/plugins/market
 }
 ```
 
-Restart Codex CLI after installation so the plugin and skills are discovered. You can browse installed plugins with `/plugins` and browse local skills with `/skills`.
+Restart OpenAI Codex CLI after installation so the plugin and skills are discovered. You can browse installed plugins with `/plugins` and browse local skills with `/skills`.
 
-For Claude Code, install this repository as a plugin from a source that preserves `.claude-plugin/plugin.json`. Claude Code discovers the top-level `skills/` directory from the plugin root.
+For Claude Code local development, load this repository directly:
+
+```bash
+cc --plugin-dir /path/to/rubric-maker-skill
+```
+
+For Claude Code distribution, install this repository as a plugin from a source that preserves `.claude-plugin/plugin.json`. Claude Code discovers the top-level `skills/` directory from the plugin root.
 
 ### Direct Skill Install
 
-If you only want one skill, install it directly into your agent's skills directory:
+If you only want one skill, install it directly into your agent runtime's skills directory. This example uses the Codex skills directory:
 
 ```bash
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
