@@ -1,32 +1,52 @@
 ---
 name: content-validation
-description: Validate OSCE rubric issues through a multi-perspective expert discussion and synthesize actionable recommendations. Use when an agent needs to assess whether a rubric concern is clinically valid, compare competing interpretations, critique proposed fixes, or produce a final consensus-style recommendation for rubric content changes.
+description: Validate specific OSCE rubric concerns for clinical validity, assessment quality, severity, and actionable fixes through expert-style critique and synthesis. Use when an agent needs to judge whether a disputed rubric issue or proposed change is valid, compare competing interpretations, incorporate educator guidance, or produce a consensus recommendation with exact rubric changes.
 ---
 
 # Content Validation
 
+## Use For
+
+- Validating whether a specific rubric concern is clinically or educationally valid.
+- Comparing disputed interpretations or proposed fixes.
+- Assigning severity, priority, confidence, and implementation implications.
+- Synthesizing a final recommendation after critique or educator guidance.
+
+## Do Not Use For
+
+- Broad first-pass rubric audits; use `osce-rubric-review`.
+- Direct adaptation, restyling, score expansion, or template application; use `osce-rubric-transform`.
+- Mechanical import from source files; use `rubric-import-structure`.
+- New post-encounter-note rubric drafting; use `post-encounter-note-rubric`.
+- Grading prompt setup or mode assignment; use `test-station-grading`.
+- Live patient simulation case design; use `practice-simulator-case`.
+
 ## Workflow
 
-1. Define the issue, scope, affected rubric rows, case context, and any educator guidance.
-2. Produce an initial expert analysis: severity, validity, clinical rationale, risks, and proposed changes.
-3. Critique alternative viewpoints if provided. Identify where evidence supports or weakens each position.
-4. Refine the recommendation into a final position with implementation notes.
-5. If enough perspectives exist, synthesize them into a consensus recommendation with confidence and unresolved questions.
+1. Clarify the concern, scope, affected rubric rows, case context, learner level, and any educator guidance.
+2. Limit rubric evidence to the relevant `QuestionName`, `Category`, or whole-rubric scope.
+3. Analyze the concern through distinct lenses: clinical correctness, assessment quality, practical implementation, and safety/fairness.
+4. Critique competing interpretations or proposed fixes. Identify real agreement, disagreement, and trade-offs.
+5. Refine the recommendation with educator guidance when provided, without overriding clinical safety or assessment validity.
+6. Synthesize a final recommendation with exact rubric changes, implementation steps, confidence, caveats, and remaining questions.
 
 ## Output
 
-Return a concise validation report:
+Return the synthesis JSON contract by default. Use round-specific JSON only when the user asks for a specific phase or a workflow needs intermediate artifacts.
 
-- `issue_summary`
-- `scope`
-- `clinical_validity`
-- `severity`
-- `recommendation`
-- `rubric_changes`
-- `implementation_notes`
-- `remaining_questions`
+For a complete validation, include:
+
+- `synthesized_verdict`
+- `synthesized_fix`
+- `model_agreement_breakdown`
+- `alternative_approaches`
+- `caveats_and_considerations`
+- `synthesized_reasoning`
+
+If the user explicitly asks for prose, preserve the same sections and semantics.
 
 ## References
 
+- Load `references/workflow-guide.md` for CLI workflow, clarification, scope handling, educator guidance, expert lenses, and sibling-skill boundaries.
+- Load `references/validation-round-contracts.md` for exact JSON contracts, output routing, severity scales, critique scales, and synthesis format.
 - Load `references/rubric-schema.md` when proposed changes must use bundled rubric or suggestion fields.
-- Load `references/content-validation-pattern.md` for discussion rounds and synthesis behavior.

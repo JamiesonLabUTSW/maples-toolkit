@@ -1,5 +1,17 @@
 # Content Validation Round Contracts
 
+## Table Of Contents
+
+- [Workflow Boundary](#workflow-boundary)
+- [Contract Selection](#contract-selection)
+- [Scope Inputs](#scope-inputs)
+- [Clarification Preflight Contract](#clarification-preflight-contract)
+- [Round 1: Initial Analysis](#round-1-initial-analysis)
+- [Round 2: Critique Others](#round-2-critique-others)
+- [Round 3: Refined Recommendation](#round-3-refined-recommendation)
+- [Synthesis Contract](#synthesis-contract)
+- [Error And Fallback Behavior](#error-and-fallback-behavior)
+
 This reference captures the JSON contracts and round structure for content
 validation. Use it when simulating a multi-perspective validation workflow or
 when formatting outputs for handoff.
@@ -9,6 +21,25 @@ when formatting outputs for handoff.
 The skill can simulate multiple expert perspectives, filter rubric YAML by
 issue scope, and synthesize a final recommendation. It should simulate the
 reasoning and JSON contracts only.
+
+Load `workflow-guide.md` for process, boundaries, clarification, educator
+guidance, and upstream-to-CLI interpretation. Use this file for output schemas.
+
+## Contract Selection
+
+Use the synthesis contract as the default complete answer for content
+validation. It contains the verdict, fix, agreement breakdown, alternatives,
+caveats, and reasoning needed for educator handoff.
+
+Use round-specific contracts only when:
+
+- the user asks for a specific round,
+- a workflow needs intermediate handoff artifacts,
+- the user provides multiple prior model responses to critique,
+- or a validation meeting is being reconstructed step by step.
+
+When the user asks for a concise answer, preserve the same fields and semantics
+even if the response is rendered as prose.
 
 ## Scope Inputs
 
@@ -23,6 +54,37 @@ available, use the raw user concern.
 
 Include only the relevant rubric section when possible and state the scope
 explicitly.
+
+## Clarification Preflight Contract
+
+Purpose: convert raw educator feedback into an actionable validation issue
+before analysis. Use this when the user's concern is ambiguous, broad, or not
+yet tied to rubric evidence.
+
+Output must be valid JSON:
+
+```json
+{
+  "clarified_concern": "Clear structured version of the user's concern with rubric references when available",
+  "scope": "entire_rubric",
+  "target_question_id": null,
+  "target_category": null,
+  "confidence": 4,
+  "needs_user_confirmation": false,
+  "clarifying_question": null
+}
+```
+
+Allowed `scope` values:
+
+- `entire_rubric`
+- `category`
+- `specific_question`
+
+Set `needs_user_confirmation` to `true` and populate
+`clarifying_question` only when missing information could reverse the
+recommendation or when the target row/category cannot be identified
+responsibly.
 
 ## Round 1: Initial Analysis
 
@@ -58,6 +120,7 @@ Requirements:
 - Include complete scoring logic if modifying scores.
 - Consider real OSCE practicality.
 - Maintain the existing rubric structure and format.
+- Recommend changes; do not apply patches unless the user explicitly asks for implementation.
 
 Severity scale:
 
@@ -73,6 +136,10 @@ Purpose: each model reviews its own Round 1 answer against the other models'
 answers, identifies agreements and disagreements, and refines its perspective.
 
 Use at least two previous responses before critique.
+
+If fewer than two Round 1 responses are available, do not present critique as a
+multi-perspective consensus. Either produce additional independent perspectives
+or state the evidence limitation.
 
 Output must be valid JSON:
 
@@ -123,6 +190,9 @@ Guidelines:
 
 Purpose: each model gives its final recommendation after reviewing the full
 discussion.
+
+Use Round 3 only after Round 1 analysis and Round 2 critique are available.
+Include educator guidance when the user provides it before final refinement.
 
 Output must be valid JSON:
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "Content Validation"
-  short_description: "Validate rubric issues with model debate"
-  default_prompt: "Use $content-validation to validate this rubric issue and synthesize recommendations."
+  short_description: "Validate OSCE rubric concerns"
+  default_prompt: "Use $content-validation to judge whether this rubric concern is valid and produce a contract-aligned recommendation."
