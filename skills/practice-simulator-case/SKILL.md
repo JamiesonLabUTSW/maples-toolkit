@@ -1,6 +1,6 @@
 ---
 name: practice-simulator-case
-description: Design live OSCE patient simulation cases for practice simulator workflows, including patient persona, station instructions, hidden case details, expected learner tasks, voice/session behavior, and optional grading alignment. Use when Codex needs to create or refine a virtual patient case for history taking, counseling, clinical reasoning, or communication practice.
+description: Design live OSCE patient simulation cases for practice simulator workflows, including patient persona, station instructions, hidden case details, expected learner tasks, voice/session behavior, and optional grading alignment. Use when an agent needs to create or refine a virtual patient case for history taking, counseling, clinical reasoning, or communication practice.
 ---
 
 # Practice Simulator Case
@@ -30,5 +30,5 @@ Use headings:
 
 ## References
 
-- Load `../../references/rubrics-app-schema.md` when aligning cases to rubric or grading fields.
+- Load `references/rubrics-app-schema.md` when aligning cases to rubric or grading fields.
 - Load `references/practice-simulator-pattern.md` for app source behavior and case design rules.

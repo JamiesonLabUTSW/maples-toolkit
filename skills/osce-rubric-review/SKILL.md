@@ -1,6 +1,6 @@
 ---
 name: osce-rubric-review
-description: Review OSCE rubrics for clinical alignment, safety, observability, objectivity, feasibility, reliability, scoring clarity, missing Technique/Purpose fields, and app-compatible suggestion output. Use when Codex needs to audit an existing rubric, produce clarifying questions, or generate structured improvement suggestions.
+description: Review OSCE rubrics for clinical alignment, safety, observability, objectivity, feasibility, reliability, scoring clarity, missing Technique/Purpose fields, and app-compatible suggestion output. Use when an agent needs to audit an existing rubric, produce clarifying questions, or generate structured improvement suggestions.
 ---
 
 # OSCE Rubric Review
@@ -22,6 +22,6 @@ description: Review OSCE rubrics for clinical alignment, safety, observability, 
 
 ## References
 
-- Load `../../references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
+- Load `references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
 - Load `references/review-framework.md` for the six-pillar audit.
 - Load `references/rubrics-app-source-map.md` for relevant `/rubrics` source behavior.

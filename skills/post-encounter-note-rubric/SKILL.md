@@ -1,6 +1,6 @@
 ---
 name: post-encounter-note-rubric
-description: Draft post-encounter-note grading rubrics from OSCE case files, station instructions, SP scripts, expected findings, sample notes, checklists, or clinical scenarios. Use when Codex needs to synthesize case materials into a note-mode rubric compatible with the /rubrics app schema, especially for SOAP notes, clinical documentation, assessment/plan, differential diagnosis, or written post-encounter note evaluation.
+description: Draft post-encounter-note grading rubrics from OSCE case files, station instructions, SP scripts, expected findings, sample notes, checklists, or clinical scenarios. Use when an agent needs to synthesize case materials into a note-mode rubric compatible with the /rubrics app schema, especially for SOAP notes, clinical documentation, assessment/plan, differential diagnosis, or written post-encounter note evaluation.
 ---
 
 # Post Encounter Note Rubric
@@ -32,7 +32,7 @@ Use `Mode: note` for every item unless the user explicitly asks for mixed video/
 
 ## References
 
-- Load `../../references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
+- Load `references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
 - Load `references/rubrics-app-format.md` for the required schema and field semantics.
 - Load `references/post-encounter-note-guide.md` for item design patterns and output examples.
 - Load `references/openai-implementation-notes.md` when implementing API-backed generation or structured outputs.

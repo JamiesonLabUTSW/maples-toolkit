@@ -120,6 +120,9 @@ def main() -> int:
     validate_skill_files()
     print("PASS skill files")
 
+    run_command([sys.executable, str(REPO_ROOT / "scripts" / "verify_schema_sync.py")])
+    print("PASS schema sync")
+
     run_command([sys.executable, str(SCRIPT_DIR / "validate_rubric.py"), str(SAMPLE_RUBRIC)])
     print(f"PASS rubric validation: {SAMPLE_RUBRIC.relative_to(REPO_ROOT)}")
 

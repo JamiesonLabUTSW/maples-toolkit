@@ -1,6 +1,6 @@
-# Rubric Maker Codex Skills
+# Rubric Maker Skills
 
-Codex CLI plugin containing skills for creating, importing, reviewing, transforming, validating, and formatting OSCE rubrics. These skills are based on the `/rubrics` web app workflows.
+Codex CLI and Claude Code plugin containing skills for creating, importing, reviewing, transforming, validating, and formatting OSCE rubrics. These skills are based on the `/rubrics` web app workflows.
 
 Published by the **UT REAL Project MAPLES** research group.
 
@@ -20,13 +20,14 @@ Licensed under the UT Southwestern academic research use release terms in [LICEN
 
 ## Installation
 
-This repository is packaged as a Codex plugin. The plugin route is preferred for this bundle because it installs all seven related skills together and keeps plugin metadata in `.codex-plugin/plugin.json`.
+This repository is packaged as a Codex CLI plugin and a Claude Code plugin. The plugin route is preferred for this bundle because it installs all seven related skills together and keeps runtime metadata in `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json`.
 
 ### Publisher Metadata
 
-Publisher identity is conveyed in two places:
+Publisher identity is conveyed in runtime manifests and marketplace metadata:
 
 - `.codex-plugin/plugin.json`: `author.name` and `interface.developerName` are set to `UT REAL Project MAPLES`; `author.url`, `homepage`, and `interface.websiteURL` point to `https://ut-real-ai-project-maples.com/`.
+- `.claude-plugin/plugin.json`: `author.name` is set to `UT REAL Project MAPLES`; `author.url` and `homepage` point to `https://ut-real-ai-project-maples.com/`.
 - Public marketplace repository: the marketplace root should use `name: "ut-real-project-maples"` and `interface.displayName: "UT REAL Project MAPLES"`.
 
 Keep the plugin package name stable as `rubric-maker-skill`; use the publisher fields and marketplace display name to identify the research group.
@@ -51,6 +52,8 @@ Recommended public marketplace layout:
   plugins/
     rubric-maker-skill/
       .codex-plugin/
+        plugin.json
+      .claude-plugin/
         plugin.json
       skills/
       README.md
@@ -120,18 +123,22 @@ Then add or update a personal marketplace entry at `$HOME/.agents/plugins/market
 
 Restart Codex CLI after installation so the plugin and skills are discovered. You can browse installed plugins with `/plugins` and browse local skills with `/skills`.
 
+For Claude Code, install this repository as a plugin from a source that preserves `.claude-plugin/plugin.json`. Claude Code discovers the top-level `skills/` directory from the plugin root.
+
 ### Direct Skill Install
 
-If you only want one skill, install it directly into Codex's skills directory:
+If you only want one skill, install it directly into your agent's skills directory:
 
 ```bash
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
 cp -R skills/post-encounter-note-rubric "${CODEX_HOME:-$HOME/.codex}/skills/"
 ```
 
+Each skill is self-contained: its `SKILL.md`, local `references/`, and optional local `scripts/` or `agents/` resources live inside the skill folder.
+
 ## Usage
 
-Invoke a skill by name in Codex CLI:
+Invoke a skill by name in Codex CLI or Claude Code:
 
 ```text
 Use $post-encounter-note-rubric to draft a rubric from these case files.
@@ -259,6 +266,12 @@ for d in skills/*/; do
 done
 ```
 
+Verify that every skill-local schema copy matches the canonical schema:
+
+```bash
+python3 scripts/verify_schema_sync.py
+```
+
 Validate the plugin wrapper:
 
 ```bash
@@ -273,9 +286,9 @@ python3 skills/rubric-import-structure/scripts/smoke_test.py
 
 ## Parity With The `/rubrics` Web App
 
-This plugin approximates workflow-level behavior inside Codex CLI. It does not replace the operational web app runtime.
+This plugin approximates workflow-level behavior inside agent runtimes. It does not replace the operational web app runtime.
 
-| Capability | Codex plugin support | Requires web app/runtime |
+| Capability | Plugin skill support | Requires web app/runtime |
 |---|---|---|
 | Import and structure rubric source files | Yes, via skill guidance and extraction scripts | No |
 | Draft post-encounter-note rubrics | Yes | No |
@@ -286,4 +299,4 @@ This plugin approximates workflow-level behavior inside Codex CLI. It does not r
 | Grade uploaded video/audio/note files with queued jobs | Prompt preparation only | Yes |
 | Persist assessments, versions, suggestions, and grading jobs | No | Yes |
 | Run live AI patient simulator sessions | Case design only | Yes |
-| Multi-model content validation with persistence/streaming | Lightweight Codex workflow only | Yes |
+| Multi-model content validation with persistence/streaming | Lightweight skill workflow only | Yes |

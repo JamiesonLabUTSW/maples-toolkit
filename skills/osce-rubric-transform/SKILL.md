@@ -1,6 +1,6 @@
 ---
 name: osce-rubric-transform
-description: Adapt, enhance, or restyle OSCE rubrics for new cases, patient populations, clinical contexts, scoring scales, or institutional templates. Use when Codex needs to transform rubric content, add score levels, fill missing Purpose or Technique fields, expand Technique examples, or apply style from one rubric to another while preserving clinical intent.
+description: Adapt, enhance, or restyle OSCE rubrics for new cases, patient populations, clinical contexts, scoring scales, or institutional templates. Use when an agent needs to transform rubric content, add score levels, fill missing Purpose or Technique fields, expand Technique examples, or apply style from one rubric to another while preserving clinical intent.
 ---
 
 # OSCE Rubric Transform
@@ -22,6 +22,6 @@ description: Adapt, enhance, or restyle OSCE rubrics for new cases, patient popu
 
 ## References
 
-- Load `../../references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
+- Load `references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
 - Load `references/transform-patterns.md` for enhancement and transformation rules.
 - Load `references/rubrics-app-source-map.md` for source behavior and prompt locations.

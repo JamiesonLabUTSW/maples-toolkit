@@ -8,6 +8,9 @@ trial/
 ~$*.xlsx
 ~$*.docx
 
+# Generated package archives.
+*.zip
+
 # Python cache and local environments.
 __pycache__/
 *.py[cod]

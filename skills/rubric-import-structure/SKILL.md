@@ -1,6 +1,6 @@
 ---
 name: rubric-import-structure
-description: Convert uploaded or pasted rubric source material such as CSV, XLSX extracts, tables, checklists, or prose scoring guides into /rubrics app-compatible YAML or JSON. Use when Codex needs to preserve source wording, map fields into Category, QuestionName, ScoringLogic, Mode, Technique, Purpose, and AdditionalContext, or normalize imported rubric data.
+description: Convert uploaded or pasted rubric source material such as CSV, XLSX extracts, tables, checklists, or prose scoring guides into /rubrics app-compatible YAML or JSON. Use when an agent needs to preserve source wording, map fields into Category, QuestionName, ScoringLogic, Mode, Technique, Purpose, and AdditionalContext, or normalize imported rubric data.
 ---
 
 # Rubric Import Structure
@@ -47,5 +47,5 @@ Dependencies:
 
 ## References
 
-- Load `../../references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
+- Load `references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
 - Load `references/import-structure-pattern.md` for schema details and source app behavior.

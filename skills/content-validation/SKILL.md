@@ -1,6 +1,6 @@
 ---
 name: content-validation
-description: Validate OSCE rubric issues through a multi-perspective expert discussion and synthesize actionable recommendations. Use when Codex needs to assess whether a rubric concern is clinically valid, compare competing interpretations, critique proposed fixes, or produce a final consensus-style recommendation for rubric content changes.
+description: Validate OSCE rubric issues through a multi-perspective expert discussion and synthesize actionable recommendations. Use when an agent needs to assess whether a rubric concern is clinically valid, compare competing interpretations, critique proposed fixes, or produce a final consensus-style recommendation for rubric content changes.
 ---
 
 # Content Validation
@@ -28,5 +28,5 @@ Return a concise validation report:
 
 ## References
 
-- Load `../../references/rubrics-app-schema.md` when proposed changes must use app-compatible rubric or suggestion fields.
+- Load `references/rubrics-app-schema.md` when proposed changes must use app-compatible rubric or suggestion fields.
 - Load `references/content-validation-pattern.md` for discussion rounds and synthesis behavior.

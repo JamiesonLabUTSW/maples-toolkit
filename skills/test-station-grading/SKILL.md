@@ -1,6 +1,6 @@
 ---
 name: test-station-grading
-description: "Prepare OSCE rubrics and grading instructions for multimodal test-station evidence: video, audio, and post-encounter-note text. Use when Codex needs to split rubric items by mode, design evidence-based grading prompts, or make rubrics compatible with the /rubrics test station grading workflow."
+description: "Prepare OSCE rubrics and grading instructions for multimodal test-station evidence: video, audio, and post-encounter-note text. Use when an agent needs to split rubric items by mode, design evidence-based grading prompts, or make rubrics compatible with the /rubrics test station grading workflow."
 ---
 
 # Test Station Grading
@@ -21,6 +21,6 @@ description: "Prepare OSCE rubrics and grading instructions for multimodal test-
 
 ## References
 
-- Load `../../references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
+- Load `references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
 - Load `references/multimodal-grading.md` for response schemas and prompt patterns.
 - Load `references/rubrics-app-source-map.md` for the embedded grading prompts in `/rubrics`.
