@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate /rubrics app-compatible analysis or transform suggestions."""
+"""Validate Rubric Maker analysis or transform suggestions."""
 
 from __future__ import annotations
 
@@ -205,7 +205,7 @@ def validate_suggestions(data: Any) -> list[ValidationIssue]:
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Validate app-compatible rubric suggestion YAML/JSON."
+        description="Validate Rubric Maker rubric suggestion YAML/JSON."
     )
     parser.add_argument("inputs", nargs="+", help="Suggestion YAML or JSON files to validate")
     parser.add_argument(

@@ -30,5 +30,5 @@ Use headings:
 
 ## References
 
-- Load `references/rubrics-app-schema.md` when aligning cases to rubric or grading fields.
-- Load `references/practice-simulator-pattern.md` for app source behavior and case design rules.
+- Load `references/rubric-schema.md` when aligning cases to rubric or grading fields.
+- Load `references/practice-simulator-pattern.md` for case design rules.

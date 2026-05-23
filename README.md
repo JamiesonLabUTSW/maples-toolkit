@@ -1,6 +1,6 @@
 # Rubric Maker Skills
 
-Codex CLI and Claude Code plugin containing skills for creating, importing, reviewing, transforming, validating, and formatting OSCE rubrics. These skills are based on the `/rubrics` web app workflows.
+Codex CLI and Claude Code plugin containing skills for creating, importing, reviewing, transforming, validating, and formatting OSCE rubrics. The plugin is self-contained and defines its own bundled Rubric Maker schema.
 
 Published by the **UT REAL Project MAPLES** research group.
 
@@ -11,7 +11,7 @@ Licensed under the UT Southwestern academic research use release terms in [LICEN
 | Skill | Use |
 |---|---|
 | `post-encounter-note-rubric` | Draft a `Mode: note` post-encounter-note grading rubric from case files, station instructions, SP scripts, sample notes, or clinical scenarios. |
-| `rubric-import-structure` | Convert pasted or extracted source material into `/rubrics` app-compatible YAML or JSON. Includes document extraction and render scripts. |
+| `rubric-import-structure` | Convert pasted or extracted source material into Rubric Maker YAML or JSON. Includes document extraction and render scripts. |
 | `osce-rubric-review` | Review OSCE rubrics for alignment, safety, observability, objectivity, feasibility, reliability, and scoring clarity. |
 | `osce-rubric-transform` | Adapt or enhance OSCE rubrics for new cases, contexts, scoring scales, missing fields, or style templates. |
 | `test-station-grading` | Prepare mode-aware rubrics and grading instructions for video, audio, or note evidence. |
@@ -145,7 +145,7 @@ Use $post-encounter-note-rubric to draft a rubric from these case files.
 ```
 
 ```text
-Use $rubric-import-structure to convert this source table into app-compatible YAML.
+Use $rubric-import-structure to convert this source table into Rubric Maker YAML.
 ```
 
 ```text
@@ -168,7 +168,7 @@ python3 skills/rubric-import-structure/scripts/extract_rubric_source.py \
   -o extracted-source.md
 ```
 
-Render an app-compatible rubric YAML or JSON file to formatted Excel:
+Render a Rubric Maker rubric YAML or JSON file to formatted Excel:
 
 ```bash
 python3 skills/rubric-import-structure/scripts/render_rubric.py rubric.yaml -o rubric.xlsx
@@ -216,7 +216,7 @@ Dependency map:
 
 ## Rubric Format
 
-The skills target the `/rubrics` app schema:
+The skills target the bundled Rubric Maker schema:
 
 ```yaml
 rubric:
@@ -272,6 +272,12 @@ Verify that every skill-local schema copy matches the canonical schema:
 python3 scripts/verify_schema_sync.py
 ```
 
+Validate Agent Skills, Codex plugin, and Claude Code plugin compatibility invariants:
+
+```bash
+python3 scripts/verify_plugin_compat.py
+```
+
 Validate the plugin wrapper:
 
 ```bash
@@ -281,14 +287,22 @@ python3 /path/to/plugin-creator/scripts/validate_plugin.py .
 Run the repository smoke test:
 
 ```bash
+python3 scripts/smoke_test.py
+```
+
+The skill-local deterministic tooling smoke test can also be run after a direct
+skill install:
+
+```bash
 python3 skills/rubric-import-structure/scripts/smoke_test.py
 ```
 
-## Parity With The `/rubrics` Web App
+## Runtime Boundaries
 
-This plugin approximates workflow-level behavior inside agent runtimes. It does not replace the operational web app runtime.
+This plugin is a standalone agent CLI package. It does not rely on unpublished
+application source files, external prompt templates, or a separate web runtime.
 
-| Capability | Plugin skill support | Requires web app/runtime |
+| Capability | Plugin skill support | Requires external runtime |
 |---|---|---|
 | Import and structure rubric source files | Yes, via skill guidance and extraction scripts | No |
 | Draft post-encounter-note rubrics | Yes | No |

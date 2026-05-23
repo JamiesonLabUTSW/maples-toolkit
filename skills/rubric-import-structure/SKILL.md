@@ -1,6 +1,6 @@
 ---
 name: rubric-import-structure
-description: Convert uploaded or pasted rubric source material such as CSV, XLSX extracts, tables, checklists, or prose scoring guides into /rubrics app-compatible YAML or JSON. Use when an agent needs to preserve source wording, map fields into Category, QuestionName, ScoringLogic, Mode, Technique, Purpose, and AdditionalContext, or normalize imported rubric data.
+description: Convert uploaded or pasted rubric source material such as CSV, XLSX extracts, tables, checklists, or prose scoring guides into Rubric Maker YAML or JSON. Use when an agent needs to preserve source wording, map fields into Category, QuestionName, ScoringLogic, Mode, Technique, Purpose, and AdditionalContext, or normalize imported rubric data.
 ---
 
 # Rubric Import Structure
@@ -9,7 +9,7 @@ description: Convert uploaded or pasted rubric source material such as CSV, XLSX
 
 1. Extract all rubric rows and scoring anchors from the source. Do not summarize away items.
 2. Preserve source wording where the user is importing an existing rubric.
-3. Map fields into the app schema:
+3. Map fields into the Rubric Maker schema:
    - `Category`
    - `QuestionName`
    - `ScoringLogic`
@@ -21,7 +21,7 @@ description: Convert uploaded or pasted rubric source material such as CSV, XLSX
 5. Use empty strings for missing optional fields.
 6. Output YAML by default; output JSON if requested.
 7. For DOCX/PDF/XLSX/CSV source files, use `scripts/extract_rubric_source.py` to create a Markdown source bundle before structuring.
-8. For finished app-compatible YAML/JSON rubrics, use `scripts/render_rubric.py` to create a formatted Excel workbook or polished Word document.
+8. For finished Rubric Maker YAML/JSON rubrics, use `scripts/render_rubric.py` to create a formatted Excel workbook or polished Word document.
 
 ## Scripts
 
@@ -47,5 +47,5 @@ Dependencies:
 
 ## References
 
-- Load `references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
-- Load `references/import-structure-pattern.md` for schema details and source app behavior.
+- Load `references/rubric-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
+- Load `references/import-structure-pattern.md` for schema details and import workflow rules.

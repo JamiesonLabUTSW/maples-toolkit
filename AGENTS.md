@@ -7,26 +7,29 @@ This repository packages Rubric Maker skills for Codex CLI and Claude Code.
 - Codex plugin manifest: `.codex-plugin/plugin.json`
 - Claude Code plugin manifest: `.claude-plugin/plugin.json`
 - Skill folders: `skills/<skill-name>/`
-- Canonical rubric schema: `references/rubrics-app-schema.md`
-- Skill-local schema copies: `skills/<skill-name>/references/rubrics-app-schema.md`
+- Canonical rubric schema: `references/rubric-schema.md`
+- Skill-local schema copies: `skills/<skill-name>/references/rubric-schema.md`
 
 Each skill must remain self-contained. Do not add skill instructions that depend on files outside that skill folder unless the same file is also bundled inside the skill.
 
-## Schema Sync Requirement
+## Compatibility Requirements
 
-`references/rubrics-app-schema.md` is the canonical schema. Every skill-local `references/rubrics-app-schema.md` copy must match it exactly.
+`references/rubric-schema.md` is the canonical bundled schema. Every skill-local `references/rubric-schema.md` copy must match it exactly.
 
 Before pushing changes, run:
 
 ```bash
+python3 scripts/verify_plugin_compat.py
 python3 scripts/verify_schema_sync.py
 ```
 
-Treat a failing schema sync check as a blocking issue. If the canonical schema changes, update every skill-local schema copy before pushing:
+Treat either failing check as a blocking issue. `verify_plugin_compat.py` enforces Agent Skills naming/frontmatter rules, Codex and Claude Code manifest presence/alignment, skill-local schema sync, and packaging hygiene.
+
+If the canonical schema changes, update every skill-local schema copy before pushing:
 
 ```bash
 for d in skills/*/references; do
-  cp references/rubrics-app-schema.md "$d/rubrics-app-schema.md"
+  cp references/rubric-schema.md "$d/rubric-schema.md"
 done
 python3 scripts/verify_schema_sync.py
 ```
@@ -36,7 +39,7 @@ python3 scripts/verify_schema_sync.py
 For skill or packaging changes, also run:
 
 ```bash
-python3 skills/rubric-import-structure/scripts/smoke_test.py
+python3 scripts/smoke_test.py
 ```
 
 When local validator skills are available, run:

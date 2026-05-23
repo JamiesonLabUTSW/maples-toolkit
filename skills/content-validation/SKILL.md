@@ -28,5 +28,5 @@ Return a concise validation report:
 
 ## References
 
-- Load `references/rubrics-app-schema.md` when proposed changes must use app-compatible rubric or suggestion fields.
+- Load `references/rubric-schema.md` when proposed changes must use bundled rubric or suggestion fields.
 - Load `references/content-validation-pattern.md` for discussion rounds and synthesis behavior.

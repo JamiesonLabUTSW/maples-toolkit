@@ -1,22 +1,14 @@
-# App Content Validation Round Contracts
+# Content Validation Round Contracts
 
-This reference captures the `/rubrics` app JSON contracts and round structure
-for content validation. Use it when simulating the app's multi-model validation
-workflow in Codex or when formatting outputs for handoff.
-
-Source map:
-
-- `/rubrics/src/blueprints/content_validation/model_orchestrator.py`
-- `/rubrics/prompts/system/content_validation/initial_analysis.j2`
-- `/rubrics/prompts/system/content_validation/critique_others.j2`
-- `/rubrics/prompts/system/content_validation/refine_response.j2`
-- `/rubrics/prompts/system/content_validation/synthesize_all.j2`
+This reference captures the JSON contracts and round structure for content
+validation. Use it when simulating a multi-perspective validation workflow or
+when formatting outputs for handoff.
 
 ## Workflow Boundary
 
-The app runs multiple models in parallel, persists each response, streams
-results to the browser, filters rubric YAML by issue scope, and stores session
-state. The Codex skill should simulate the reasoning and JSON contracts only.
+The skill can simulate multiple expert perspectives, filter rubric YAML by
+issue scope, and synthesize a final recommendation. It should simulate the
+reasoning and JSON contracts only.
 
 ## Scope Inputs
 
@@ -29,8 +21,8 @@ Each validation issue may be scoped to:
 Use the user's clarified issue when available. If clarification is not
 available, use the raw user concern.
 
-The app filters the rubric before analysis based on scope. In Codex, include
-only the relevant rubric section when possible and state the scope explicitly.
+Include only the relevant rubric section when possible and state the scope
+explicitly.
 
 ## Round 1: Initial Analysis
 
@@ -80,7 +72,7 @@ Severity scale:
 Purpose: each model reviews its own Round 1 answer against the other models'
 answers, identifies agreements and disagreements, and refines its perspective.
 
-The app requires at least two previous responses before critique.
+Use at least two previous responses before critique.
 
 Output must be valid JSON:
 
@@ -253,10 +245,8 @@ Confidence levels:
 
 ## Error And Fallback Behavior
 
-The app attempts to parse JSON from direct text or fenced JSON. When parsing
-fails, it stores raw text with parse-error metadata. In Codex output, avoid this
-fallback by returning clean JSON for each round when a JSON contract is
-requested.
+Consumers may parse JSON from direct text or fenced JSON. Avoid fallback parsing
+by returning clean JSON for each round when a JSON contract is requested.
 
 If the issue is not valid, still populate the verdict fields and explain why.
 Use `suggested_fix` or `final_fix` to state that no rubric change is recommended

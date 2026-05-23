@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate /rubrics app-compatible rubric YAML or JSON."""
+"""Validate Rubric Maker rubric YAML or JSON."""
 
 from __future__ import annotations
 
@@ -160,16 +160,16 @@ def validate_rubric(data: Any, schema: str = "plugin") -> list[ValidationIssue]:
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Validate app-compatible rubric YAML/JSON."
+        description="Validate Rubric Maker rubric YAML/JSON."
     )
     parser.add_argument("inputs", nargs="+", help="Rubric YAML or JSON files to validate")
     parser.add_argument(
         "--schema",
-        choices=["plugin", "app"],
+        choices=["plugin", "minimal"],
         default="plugin",
         help=(
             "Validation strictness. 'plugin' requires all rubric-maker-skill fields; "
-            "'app' requires only the web app minimum fields."
+            "'minimal' requires only the minimum rubric fields."
         ),
     )
     parser.add_argument(

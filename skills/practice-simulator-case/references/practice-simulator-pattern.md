@@ -1,6 +1,6 @@
 # Practice Simulator Pattern
 
-The `/rubrics` practice simulator uses live AI patient behavior. Case design should keep student-facing instructions separate from hidden patient details.
+Practice simulator cases use live AI patient behavior. Case design should keep student-facing instructions separate from hidden patient details.
 
 Include:
 

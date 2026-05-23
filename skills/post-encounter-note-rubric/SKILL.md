@@ -1,13 +1,13 @@
 ---
 name: post-encounter-note-rubric
-description: Draft post-encounter-note grading rubrics from OSCE case files, station instructions, SP scripts, expected findings, sample notes, checklists, or clinical scenarios. Use when an agent needs to synthesize case materials into a note-mode rubric compatible with the /rubrics app schema, especially for SOAP notes, clinical documentation, assessment/plan, differential diagnosis, or written post-encounter note evaluation.
+description: Draft post-encounter-note grading rubrics from OSCE case files, station instructions, SP scripts, expected findings, sample notes, checklists, or clinical scenarios. Use when an agent needs to synthesize case materials into a note-mode Rubric Maker schema, especially for SOAP notes, clinical documentation, assessment/plan, differential diagnosis, or written post-encounter note evaluation.
 ---
 
 # Post Encounter Note Rubric
 
 ## Overview
 
-Create a draft OSCE post-encounter-note rubric from case materials. Follow the `/rubrics` app conventions: each rubric item has `Category`, `QuestionName`, `ScoringLogic`, `Mode`, `Technique`, `Purpose`, and `AdditionalContext`.
+Create a draft OSCE post-encounter-note rubric from case materials. Follow the bundled Rubric Maker schema: each rubric item has `Category`, `QuestionName`, `ScoringLogic`, `Mode`, `Technique`, `Purpose`, and `AdditionalContext`.
 
 Use `Mode: note` for every item unless the user explicitly asks for mixed video/audio/note assessment.
 
@@ -19,7 +19,7 @@ Use `Mode: note` for every item unless the user explicitly asks for mixed video/
 4. Create 8-15 rubric items unless the user requests a different size. Keep items single-purpose and evidence-based.
 5. Write scoring levels from lowest to highest as `Score1`, `Score2`, etc. Use 3-5 levels by default. Make each level independently scorable from the note text.
 6. Include `Technique` as the expected documentation evidence, not physical exam technique. Include `Purpose` as the educational/clinical rationale.
-7. Output YAML by default, using the exact schema in `references/rubrics-app-format.md`. Output JSON only if the user asks.
+7. Output YAML by default, using the exact schema in `references/rubric-format.md`. Output JSON only if the user asks.
 
 ## Quality Rules
 
@@ -32,8 +32,7 @@ Use `Mode: note` for every item unless the user explicitly asks for mixed video/
 
 ## References
 
-- Load `references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
-- Load `references/rubrics-app-format.md` for the required schema and field semantics.
+- Load `references/rubric-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
+- Load `references/rubric-format.md` for the required schema and field semantics.
 - Load `references/post-encounter-note-guide.md` for item design patterns and output examples.
 - Load `references/openai-implementation-notes.md` when implementing API-backed generation or structured outputs.
-- Load `references/rubrics-app-source-map.md` when checking how this mirrors the `/rubrics` app.

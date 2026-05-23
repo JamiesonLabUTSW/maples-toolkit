@@ -1,6 +1,8 @@
-# /rubrics App Schema Reference
+# Rubric Maker Schema Reference
 
-This reference is bundled with each Rubric Maker skill. It mirrors the core schema used by the `/rubrics` web app while documenting the stricter conventions used by these plugin skills.
+This reference is bundled with each Rubric Maker skill. It defines the schema
+used by this plugin for rubric generation, normalization, rendering, and
+structured improvement suggestions.
 
 ## Core Rubric Object
 
@@ -19,9 +21,9 @@ rubric:
     AdditionalContext: ""
 ```
 
-## App Minimum Versus Plugin Convention
+## Minimum Versus Plugin Convention
 
-The web app minimum requires:
+The minimal rubric shape requires:
 
 - `Category`
 - `QuestionName`
@@ -37,7 +39,10 @@ The plugin skill convention requires every generated or normalized rubric item t
 - `Purpose`
 - `AdditionalContext`
 
-This stricter plugin convention makes generated rubrics easier to grade, render, validate, and move between workflows. When importing existing app rubrics, missing optional fields should be normalized to empty strings rather than omitted.
+This stricter plugin convention makes generated rubrics easier to grade,
+render, validate, and move between workflows. When importing existing rubrics,
+missing optional fields should be normalized to empty strings rather than
+omitted.
 
 ## Field Rules
 

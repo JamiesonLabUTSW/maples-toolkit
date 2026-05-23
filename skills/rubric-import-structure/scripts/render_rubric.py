@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a /rubrics app-compatible rubric to formatted XLSX or DOCX."""
+"""Render a Rubric Maker rubric to formatted XLSX or DOCX."""
 
 from __future__ import annotations
 
@@ -188,7 +188,7 @@ def render_docx(rubric: list[dict[str, Any]], output: Path) -> None:
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Render app-compatible rubric YAML/JSON to formatted XLSX or DOCX."
+        description="Render Rubric Maker rubric YAML/JSON to formatted XLSX or DOCX."
     )
     parser.add_argument("input", help="Input rubric YAML or JSON")
     parser.add_argument("-o", "--output", required=True, help="Output path")

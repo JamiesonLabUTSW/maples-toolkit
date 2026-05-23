@@ -1,6 +1,6 @@
 # Content Validation Pattern
 
-The `/rubrics` app supports multi-model validation of rubric issues:
+Content validation can use multiple perspectives for rubric issues:
 
 - Initial analysis of the issue.
 - Critique of other model responses.

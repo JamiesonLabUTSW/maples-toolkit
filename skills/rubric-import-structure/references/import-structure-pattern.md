@@ -1,9 +1,9 @@
 # Import Structure Pattern
 
-The `/rubrics` app imports rubrics through a two-step pattern:
+Rubric imports use a two-step pattern:
 
 1. Extract every rubric item and score anchor from source material.
-2. Structure the result into the app schema.
+2. Structure the result into the Rubric Maker schema.
 
 Schema:
 
@@ -31,6 +31,6 @@ Rules:
 ## Deterministic File Tools
 
 - `scripts/extract_rubric_source.py`: Converts `.docx`, `.pdf`, `.xlsx`, `.xlsm`, `.csv`, `.tsv`, `.txt`, and `.md` into a Markdown source bundle. Use this before asking Codex or a model to structure the rubric.
-- `scripts/render_rubric.py`: Converts app-compatible YAML/JSON into formatted `.xlsx` or `.docx` output. Use this after the rubric has already been generated or structured.
+- `scripts/render_rubric.py`: Converts Rubric Maker YAML/JSON into formatted `.xlsx` or `.docx` output. Use this after the rubric has already been generated or structured.
 
 The scripts intentionally do not call an LLM. They separate deterministic file handling from rubric generation.

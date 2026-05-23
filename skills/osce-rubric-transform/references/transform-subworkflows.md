@@ -1,18 +1,8 @@
-# App Transform And Enhancement Subworkflows
+# Transform And Enhancement Subworkflows
 
-This reference captures `/rubrics` app constraints for transformation and
-enhancement workflows. Use it when adapting rubrics, adding score levels,
-filling missing fields, expanding techniques, or applying a reference style.
-
-Source map:
-
-- `/rubrics/prompts/system/transform_extraction.j2`
-- `/rubrics/prompts/system/transform_structure.j2`
-- `/rubrics/prompts/system/enhance/add_scores_extraction.j2`
-- `/rubrics/prompts/system/enhance/fill_missing_fields_extraction.j2`
-- `/rubrics/prompts/system/enhance/expand_techniques_extraction.j2`
-- `/rubrics/prompts/system/template_application_extraction.j2`
-- `/rubrics/src/suggestion_schemas/suggestion_schemas.py`
+This reference captures constraints for transformation and enhancement
+workflows. Use it when adapting rubrics, adding score levels, filling missing
+fields, expanding techniques, or applying a reference style.
 
 ## Shared Suggestion Contract
 
@@ -132,8 +122,8 @@ Technique guidance:
 - Align with the existing scoring logic.
 - Include acceptable variations without becoming exhaustive.
 
-All missing fields are high priority in the app workflow because they affect
-assessment completeness.
+All missing fields are high priority because they affect assessment
+completeness.
 
 ## Expand Techniques
 
@@ -201,4 +191,4 @@ Constraints:
 ## Empty Result
 
 Return `[]` when the requested transform or enhancement does not require
-actionable app suggestions. Do not invent changes just to produce output.
+actionable suggestions. Do not invent changes just to produce output.

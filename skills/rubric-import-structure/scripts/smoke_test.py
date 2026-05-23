@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import importlib.util
-import json
 import subprocess
 import sys
 import tempfile
@@ -13,8 +12,6 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_DIR = SCRIPT_DIR.parent
-REPO_ROOT = SKILL_DIR.parent.parent
-SKILLS_DIR = REPO_ROOT / "skills"
 SAMPLE_RUBRIC = SKILL_DIR / "references" / "sample-rubric.yaml"
 
 
@@ -25,7 +22,7 @@ def has_module(module_name: str) -> bool:
 def run_command(args: list[str]) -> None:
     completed = subprocess.run(
         args,
-        cwd=REPO_ROOT,
+        cwd=SKILL_DIR,
         text=True,
         capture_output=True,
         check=False,
@@ -37,15 +34,6 @@ def run_command(args: list[str]) -> None:
         raise RuntimeError(f"{' '.join(args)} failed with exit code {completed.returncode}\n{output}")
 
 
-def validate_plugin_manifest() -> None:
-    manifest_path = REPO_ROOT / ".codex-plugin" / "plugin.json"
-    data = json.loads(manifest_path.read_text(encoding="utf-8"))
-    if not data.get("name"):
-        raise AssertionError("plugin manifest is missing name")
-    if not data.get("version"):
-        raise AssertionError("plugin manifest is missing version")
-
-
 def frontmatter(text: str) -> str:
     if not text.startswith("---\n"):
         return ""
@@ -55,25 +43,21 @@ def frontmatter(text: str) -> str:
     return text[4:end]
 
 
-def validate_skill_files() -> None:
-    skill_files = sorted(SKILLS_DIR.glob("*/SKILL.md"))
-    if not skill_files:
-        raise AssertionError("no skill files found")
-
-    for path in skill_files:
-        text = path.read_text(encoding="utf-8")
-        meta = frontmatter(text)
-        missing: list[str] = []
-        if "name:" not in meta:
-            missing.append("frontmatter name")
-        if "description:" not in meta:
-            missing.append("frontmatter description")
-        if "# " not in text:
-            missing.append("heading")
-        if "## Workflow" not in text:
-            missing.append("Workflow section")
-        if missing:
-            raise AssertionError(f"{path.relative_to(REPO_ROOT)} missing {', '.join(missing)}")
+def validate_skill_file() -> None:
+    path = SKILL_DIR / "SKILL.md"
+    text = path.read_text(encoding="utf-8")
+    meta = frontmatter(text)
+    missing: list[str] = []
+    if "name:" not in meta:
+        missing.append("frontmatter name")
+    if "description:" not in meta:
+        missing.append("frontmatter description")
+    if "# " not in text:
+        missing.append("heading")
+    if "## Workflow" not in text:
+        missing.append("Workflow section")
+    if missing:
+        raise AssertionError(f"{path.name} missing {', '.join(missing)}")
 
 
 def exercise_extractors(tmpdir: Path) -> list[str]:
@@ -114,17 +98,11 @@ def exercise_renderers(tmpdir: Path) -> list[str]:
 
 
 def main() -> int:
-    validate_plugin_manifest()
-    print("PASS plugin manifest")
-
-    validate_skill_files()
-    print("PASS skill files")
-
-    run_command([sys.executable, str(REPO_ROOT / "scripts" / "verify_schema_sync.py")])
-    print("PASS schema sync")
+    validate_skill_file()
+    print("PASS skill file")
 
     run_command([sys.executable, str(SCRIPT_DIR / "validate_rubric.py"), str(SAMPLE_RUBRIC)])
-    print(f"PASS rubric validation: {SAMPLE_RUBRIC.relative_to(REPO_ROOT)}")
+    print(f"PASS rubric validation: {SAMPLE_RUBRIC.relative_to(SKILL_DIR)}")
 
     with tempfile.TemporaryDirectory(prefix="rubric-maker-smoke-") as raw_tmpdir:
         tmpdir = Path(raw_tmpdir)

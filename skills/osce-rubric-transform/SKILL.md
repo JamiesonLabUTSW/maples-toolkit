@@ -16,12 +16,11 @@ description: Adapt, enhance, or restyle OSCE rubrics for new cases, patient popu
 
 ## Output Guidance
 
-- Prefer app-compatible suggestions using `location`, `current_value`, `suggested_value`, `reasoning`, `priority`, `row`, `field`, and optional `sub`.
-- For full rewrites, output `/rubrics` schema YAML.
+- Prefer structured suggestions using `location`, `current_value`, `suggested_value`, `reasoning`, `priority`, `row`, `field`, and optional `sub`.
+- For full rewrites, output Rubric Maker schema YAML.
 - Explain assumptions when transforming a case with incomplete information.
 
 ## References
 
-- Load `references/rubrics-app-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
+- Load `references/rubric-schema.md` for the shared schema, mode semantics, and structured suggestion conventions.
 - Load `references/transform-patterns.md` for enhancement and transformation rules.
-- Load `references/rubrics-app-source-map.md` for source behavior and prompt locations.

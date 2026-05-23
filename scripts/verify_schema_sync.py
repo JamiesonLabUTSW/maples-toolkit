@@ -9,23 +9,23 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_CANONICAL = REPO_ROOT / "references" / "rubrics-app-schema.md"
+DEFAULT_CANONICAL = REPO_ROOT / "references" / "rubric-schema.md"
 DEFAULT_SKILLS_DIR = REPO_ROOT / "skills"
-SCHEMA_RELATIVE_PATH = Path("references") / "rubrics-app-schema.md"
+SCHEMA_RELATIVE_PATH = Path("references") / "rubric-schema.md"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Check that every skill with a SKILL.md file has a local "
-            "references/rubrics-app-schema.md matching the canonical schema."
+            "references/rubric-schema.md matching the canonical schema."
         )
     )
     parser.add_argument(
         "--canonical",
         type=Path,
         default=DEFAULT_CANONICAL,
-        help="Canonical schema file. Defaults to references/rubrics-app-schema.md.",
+        help="Canonical schema file. Defaults to references/rubric-schema.md.",
     )
     parser.add_argument(
         "--skills-dir",
@@ -74,8 +74,8 @@ def main() -> int:
         for error in errors:
             print(f"ERROR {error}", file=sys.stderr)
         print(
-            "Run: cp references/rubrics-app-schema.md "
-            "skills/<skill-name>/references/rubrics-app-schema.md",
+            "Run: cp references/rubric-schema.md "
+            "skills/<skill-name>/references/rubric-schema.md",
             file=sys.stderr,
         )
         return 1

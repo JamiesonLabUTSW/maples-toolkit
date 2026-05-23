@@ -1,19 +1,12 @@
-# App Analysis Suggestion Contracts
+# Analysis Suggestion Contracts
 
-This reference captures app-level rules for OSCE rubric review suggestions.
-Use it when converting critique into structured suggestions or checking whether
-a review result can round-trip through the `/rubrics` app.
-
-Source map:
-
-- `/rubrics/prompts/system/analysis_extraction.j2`
-- `/rubrics/prompts/system/analysis_structuring.j2`
-- `/rubrics/src/suggestion_schemas/suggestion_schemas.py`
-- `/rubrics/src/suggestion_schemas/pydantic_schemas.py`
+This reference captures rules for OSCE rubric review suggestions. Use it when
+converting critique into structured suggestions or checking whether a review
+result follows the bundled Rubric Maker suggestion contract.
 
 ## Two-Step Analysis Flow
 
-The app review workflow is two-step:
+The review workflow is two-step:
 
 1. Analyze the rubric in natural language and identify needed fixes.
 2. Convert that analysis into a JSON array of suggestions.
@@ -85,18 +78,18 @@ Do not:
 
 - Paraphrase.
 - Normalize grammar before copying.
-- Replace app wording with a conceptual equivalent.
+- Replace the original wording with a conceptual equivalent.
 - Split one current cell into multiple partial current values.
 
-The app depends on exact matching for filtering and applying suggestions. If a
-cell has several issues, create one comprehensive replacement for that cell
-instead of several suggestions for separate fragments.
+Exact matching is required for filtering and applying suggestions. If a cell
+has several issues, create one comprehensive replacement for that cell instead
+of several suggestions for separate fragments.
 
 ## No-Suggestions Behavior
 
-Return an empty JSON array `[]` when no app-actionable changes are needed.
+Return an empty JSON array `[]` when no actionable changes are needed.
 
-The app prompt treats `[]` as correct when all of these are true:
+Treat `[]` as correct when all of these are true:
 
 - No fields start with Excel-problematic characters: `-`, `=`, `+`, or `@`.
 - `QuestionName` values are clear and specific.
@@ -116,7 +109,7 @@ Do not return `[]` if critical or high-priority issues remain.
 
 ## Review Priorities
 
-Use these app priority patterns:
+Use these priority patterns:
 
 - `critical`: Excel safety, missing score levels, contradictory criteria.
 - `high`: vague question names, unclear score progression, medical spelling
@@ -157,8 +150,7 @@ Avoid multiple suggestions that each modify the same `row` + `field` + `sub`.
 
 ## Video Assessability Checks
 
-The app analysis prompt is especially tuned for video-assessable OSCE rubrics.
-Suggested changes should improve:
+For video-assessable OSCE rubrics, suggested changes should improve:
 
 - Observability: visible or otherwise available in the selected mode.
 - Specificity: exact actions rather than vague labels.

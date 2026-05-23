@@ -1,17 +1,12 @@
-# App Test Station Grading Contracts
+# Test Station Grading Contracts
 
-This reference captures the `/rubrics` web app prompt and response contracts for
-test-station grading. Use it when preparing Codex grading instructions or when
-checking whether generated grading output matches the app's expected shape.
-
-Source map:
-
-- `/rubrics/src/grading_services/test_station_service.py`
-- `/rubrics/src/grading_schemas/multimodal_grading.py`
+This reference captures prompt and response contracts for test-station grading.
+Use it when preparing grading instructions or when checking whether generated
+grading output matches the expected shape.
 
 ## Mode Detection
 
-The app grades by mode: `audio`, `video`, or `note`.
+Grade by mode: `audio`, `video`, or `note`.
 
 - Prefer the rubric item's explicit `mode`.
 - If mode is absent, infer from file type:
@@ -36,7 +31,7 @@ Scoring Rubric:
   2: <Response for score 2>
 ```
 
-The app constructs one user prompt per grading section. If the rubric includes a
+Construct one user prompt per grading section. If the rubric includes a
 non-default section, the prompt states which section is being graded before the
 items.
 
@@ -126,7 +121,7 @@ Schema notes:
 
 - `statements` is required and must be an array.
 - Each statement requires `text`, `start_time`, `end_time`, and `rationale`.
-- The app tolerates `statement` as an input alias for `text` during validation.
+- `statement` may be accepted as an input alias for `text` during validation.
 - `total_count` is a non-negative integer.
 - `score` is a non-negative number.
 
@@ -168,9 +163,9 @@ Schema notes:
 - `answer` must be one of `Supports`, `Refutes`, or `Neutral`.
 - `score` is optional and must be a non-negative number when present.
 
-## Codex Parity Boundary
+## Runtime Boundary
 
 This skill can prepare grading prompts and inspect grading JSON for contract
-fit. It does not implement the app runtime pieces: Gemini/Vertex media upload,
-multi-angle video processing, background jobs, Cloud Tasks, GCS artifact
-storage, persisted grading jobs, or result export.
+fit. It does not implement external runtime pieces such as media upload,
+multi-angle video processing, background jobs, artifact storage, persisted
+grading jobs, or result export.
