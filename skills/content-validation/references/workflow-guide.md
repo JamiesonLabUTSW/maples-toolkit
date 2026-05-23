@@ -138,7 +138,7 @@ Use `rubric-import-structure` to convert source material into Rubric Maker YAML 
 
 Use `test-station-grading` for mode assignment, evidence requirements, and grading prompt setup for video, audio, or note evidence. Use `content-validation` when the evidence mode or scoring basis raises a substantive validity concern.
 
-Use `practice-simulator-case` to create or refine live OSCE simulation cases. Use `content-validation` when case-to-rubric alignment is disputed or expected learner tasks need clinical validity review.
+Live OSCE simulation case design belongs outside this rubric-focused plugin. Use `content-validation` only when case-to-rubric alignment is disputed or expected learner tasks need clinical validity review.
 
 ## Do Not Port From The App
 

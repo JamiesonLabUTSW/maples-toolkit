@@ -565,8 +565,8 @@ Use `test-station-grading` instead of this skill for grading prompt setup,
 mode assignment, or evidence requirements. Use this skill only when the rubric
 content itself needs changes.
 
-Use `practice-simulator-case` instead of this skill for virtual patient case
-design. Use this skill when an existing rubric must be aligned to that case.
+Virtual patient case design belongs outside this rubric-focused plugin. Use this
+skill only when an existing rubric must be aligned to that case.
 
 ## Do Not Port From The App
 

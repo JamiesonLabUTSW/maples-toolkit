@@ -19,7 +19,7 @@ description: Review OSCE rubrics for clinical alignment, safety, observability, 
 - Mechanical import from source files; use `rubric-import-structure`.
 - New post-encounter-note rubric drafting; use `post-encounter-note-rubric`.
 - Grading prompt setup, evidence requirements, or mode assignment for test-station grading; use `test-station-grading`.
-- Live patient simulation case design; use `practice-simulator-case`.
+- Live patient simulation case design; treat as out of scope for this rubric-focused plugin.
 
 ## Sibling Sequence
 

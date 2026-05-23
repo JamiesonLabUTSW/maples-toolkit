@@ -19,7 +19,7 @@
   "interface": {
     "displayName": "Rubric Maker Skills",
     "shortDescription": "OSCE rubric creation and review skills",
-    "longDescription": "A Codex plugin published by the UT REAL Project MAPLES research group containing skills for drafting post-encounter-note rubrics, importing source documents, reviewing OSCE rubrics, transforming rubrics, preparing test-station grading, validating rubric content, and designing practice simulator cases.",
+    "longDescription": "A Codex plugin published by the UT REAL Project MAPLES research group containing skills for drafting post-encounter-note rubrics, importing source documents, reviewing OSCE rubrics, transforming rubrics, preparing test-station grading, and validating rubric content.",
     "developerName": "UT REAL Project MAPLES",
     "category": "Education",
     "websiteURL": "https://ut-real-ai-project-maples.com/",

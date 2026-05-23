@@ -20,7 +20,7 @@ description: This skill should be used when the user asks to adapt an OSCE rubri
 - Mechanical import from source files, CSV/XLSX extracts, tables, checklists, or prose guides; use `rubric-import-structure`.
 - New post-encounter-note rubric drafting from case materials; use `post-encounter-note-rubric`.
 - Grading prompt setup, evidence requirements, or mode assignment for video/audio/note test-station grading; use `test-station-grading`.
-- Live virtual patient simulation case design; use `practice-simulator-case`.
+- Live virtual patient simulation case design; treat as out of scope for this rubric-focused plugin.
 
 ## Sibling Sequence
 

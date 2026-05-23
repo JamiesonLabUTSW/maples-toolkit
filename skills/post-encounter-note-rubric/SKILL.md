@@ -25,7 +25,7 @@ Use `Mode: note` for every item. If the user asks for mixed video/audio/note ass
 - Transforming, restyling, adapting, expanding score levels, or filling missing fields in an existing rubric; use `osce-rubric-transform`.
 - Validating a disputed concern, proposed fix, clinical-validity question, severity, or consensus recommendation; use `content-validation`.
 - Assigning modes, splitting a rubric across video/audio/note evidence, designing grading prompts, or preparing test-station grading workflows; use `test-station-grading`.
-- Designing live virtual patient simulation cases; use `practice-simulator-case`.
+- Designing live virtual patient simulation cases; treat as out of scope for this rubric-focused plugin.
 
 ## Sibling Sequence
 

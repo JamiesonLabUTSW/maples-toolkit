@@ -16,11 +16,10 @@ Licensed under the UT Southwestern academic research use release terms in [LICEN
 | `osce-rubric-transform` | Adapt or enhance OSCE rubrics for new cases, contexts, scoring scales, missing fields, or style templates. |
 | `test-station-grading` | Prepare mode-aware rubrics and grading instructions for video, audio, or note evidence. |
 | `content-validation` | Validate rubric issues through multi-perspective critique and final recommendations. |
-| `practice-simulator-case` | Design live OSCE patient simulation cases with hidden patient details and student-facing instructions. |
 
 ## Installation
 
-This repository is packaged as a Codex CLI plugin and a Claude Code plugin. The plugin route is preferred for this bundle because it installs all seven related skills together and keeps runtime metadata in `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json`.
+This repository is packaged as a Codex CLI plugin and a Claude Code plugin. The plugin route is preferred for this bundle because it installs all six related skills together and keeps runtime metadata in `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json`.
 
 ### Supported Runtimes
 
