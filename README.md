@@ -14,12 +14,14 @@ Licensed under the UT Southwestern academic research use release terms in [LICEN
 | `rubric-import` | Import existing rubric source material into Rubric Maker YAML or JSON while preserving wording. Includes document extraction and render scripts. |
 | `osce-rubric-review` | Review OSCE rubrics for alignment, safety, observability, objectivity, feasibility, reliability, and scoring clarity. |
 | `osce-rubric-transform` | Adapt or enhance OSCE rubrics for new cases, contexts, scoring scales, missing fields, or style templates. |
-| `test-station-grading` | Prepare mode-aware rubrics and grading instructions for video, audio, or note evidence. |
+| `generate-student-artifact` | Generate synthetic student notes or encounter transcripts from a case and learner performance profile. |
+| `grading-dry-run` | Dry-run grade a student note, transcript, or observation log against an OSCE rubric and produce an evidence-backed trial grade sheet. |
+| `evaluate-dry-run` | Analyze a case, rubric, student artifact, and trial grade sheet to identify rubric improvements. |
 | `content-validation` | Validate rubric issues through multi-perspective critique and final recommendations. |
 
 ## Installation
 
-This repository is packaged as a Codex CLI plugin and a Claude Code plugin. The plugin route is preferred for this bundle because it installs all six related skills together and keeps runtime metadata in `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json`.
+This repository is packaged as a Codex CLI plugin and a Claude Code plugin. The plugin route is preferred for this bundle because it installs the related skills together and keeps runtime metadata in `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json`.
 
 ### Supported Runtimes
 
@@ -170,7 +172,15 @@ Use $osce-rubric-review to audit this rubric for safety and scoring clarity.
 ```
 
 ```text
-Use $test-station-grading to prepare this rubric for note and video grading.
+Use $generate-student-artifact to create an average learner note for this case.
+```
+
+```text
+Use $grading-dry-run to grade this sample note against the draft rubric.
+```
+
+```text
+Use $evaluate-dry-run to turn this trial grade sheet into rubric improvement suggestions.
 ```
 
 ## Document And Output Scripts
@@ -327,7 +337,9 @@ application source files, external prompt templates, or a separate web runtime.
 | Transform or enhance rubrics | Yes, as skill-guided analysis | No |
 | Validate rubric YAML/JSON shape | Yes, via validation scripts | No |
 | Render rubric YAML/JSON to XLSX/DOCX | Yes, via render script | No |
-| Grade uploaded video/audio/note files with queued jobs | Prompt preparation only | Yes |
+| Generate synthetic notes or transcripts for rubric testing | Yes | No |
+| Dry-run grade notes, transcripts, or timestamped observation logs | Yes, with deterministic grade-sheet checks | No |
+| Inspect raw audio/video or run queued grading jobs | No | Yes |
 | Persist assessments, versions, suggestions, and grading jobs | No | Yes |
 | Run live AI patient simulator sessions | Case design only | Yes |
 | Multi-model content validation with persistence/streaming | Lightweight skill workflow only | Yes |

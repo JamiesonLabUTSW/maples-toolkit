@@ -1,7 +1,7 @@
 {
   "name": "rubric-maker-skill",
   "version": "0.1.0",
-  "description": "Skills from the UT REAL Project MAPLES research group for creating, importing, reviewing, transforming, validating, and formatting OSCE rubrics.",
+  "description": "Skills from the UT REAL Project MAPLES research group for creating, importing, reviewing, transforming, dry-running, validating, and formatting OSCE rubrics.",
   "author": {
     "name": "UT REAL Project MAPLES",
     "url": "https://ut-real-ai-project-maples.com/"

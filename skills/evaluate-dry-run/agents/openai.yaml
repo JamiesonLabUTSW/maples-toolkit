@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evaluate Dry Run"
+  short_description: "Turn trial grading friction into rubric fixes"
+  default_prompt: "Use $evaluate-dry-run to analyze this dry-run grading result and produce prioritized rubric-improvement suggestions."

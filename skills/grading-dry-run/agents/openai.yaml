@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grading Dry Run"
+  short_description: "Dry-run rubric grading"
+  default_prompt: "Use $grading-dry-run to score this sample student artifact against the rubric and validate the grade sheet."

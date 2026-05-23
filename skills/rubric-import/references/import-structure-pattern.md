@@ -56,7 +56,7 @@ Use `Mode` only to make the imported rubric app-compatible:
 - `audio`: spoken content, questions, counseling, explanations, rapport, or transcript-only evidence.
 - `note`: written post-encounter-note evidence, documentation, differential diagnosis, assessment, or plan.
 
-Default unclear encounter behavior to `video`. Do not use this import workflow to split a rubric by evidence source or design grading prompts; use `test-station-grading` for that.
+Default unclear encounter behavior to `video`. Do not use this import workflow to test whether a rubric works against a sample artifact; use `grading-dry-run` for that. Use `evaluate-dry-run` when a completed trial grade sheet should drive improvement suggestions.
 
 ## Row Handling
 

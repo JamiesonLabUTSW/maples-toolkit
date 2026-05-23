@@ -561,9 +561,10 @@ Use `post-encounter-note-rubric` instead of this skill when creating a new
 note-mode rubric from case materials. Use this skill later to adapt, restyle, or
 expand that existing rubric.
 
-Use `test-station-grading` instead of this skill for grading prompt setup,
-mode assignment, or evidence requirements. Use this skill only when the rubric
-content itself needs changes.
+Use `grading-dry-run` instead of this skill to produce a provisional grade
+sheet from a rubric and sample artifact. Use `evaluate-dry-run` to identify
+rubric changes from that trial grade sheet. Use this skill only when the rubric
+content itself needs changes or accepted suggestions need to be applied.
 
 Virtual patient case design belongs outside this rubric-focused plugin. Use this
 skill only when an existing rubric must be aligned to that case.

@@ -136,7 +136,7 @@ Use `post-encounter-note-rubric` to create note-mode rubrics from case materials
 
 Use `rubric-import` to convert source material into Rubric Maker YAML or JSON. Do not use `content-validation` for mechanical import. Use it after import if preserved source wording contains questionable clinical criteria or conflicting score anchors.
 
-Use `test-station-grading` for mode assignment, evidence requirements, and grading prompt setup for video, audio, or note evidence. Use `content-validation` when the evidence mode or scoring basis raises a substantive validity concern.
+Use `generate-student-artifact` to create synthetic sample notes or transcripts. Use `grading-dry-run` to produce trial grade sheets from sample artifacts. Use `evaluate-dry-run` for routine rubric improvements based on trial grading results. Use `content-validation` when the dry-run evidence, scoring basis, or proposed fix raises a substantive clinical validity, fairness, safety, or severity concern.
 
 Live OSCE simulation case design belongs outside this rubric-focused plugin. Use `content-validation` only when case-to-rubric alignment is disputed or expected learner tasks need clinical validity review.
 

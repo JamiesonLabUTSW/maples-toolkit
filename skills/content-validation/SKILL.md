@@ -1,6 +1,6 @@
 ---
 name: content-validation
-description: Validate specific OSCE rubric concerns for clinical validity, assessment quality, severity, and actionable fixes through expert-style critique and synthesis. Use when an agent needs to judge whether a disputed rubric issue or proposed change is valid, compare competing interpretations, incorporate educator guidance, or produce a consensus recommendation with exact rubric changes.
+description: Validate specific OSCE rubric concerns for clinical validity, assessment quality, severity, and actionable fixes through expert-style critique and synthesis. Use when an agent needs to judge whether a disputed rubric issue or proposed change is valid, including concerns surfaced by dry-run grading, compare competing interpretations, incorporate educator guidance, or produce a consensus recommendation with exact rubric changes.
 ---
 
 # Content Validation
@@ -18,7 +18,9 @@ description: Validate specific OSCE rubric concerns for clinical validity, asses
 - Direct adaptation, restyling, score expansion, or template application; use `osce-rubric-transform`.
 - Mechanical import from source files; use `rubric-import`.
 - New post-encounter-note rubric drafting; use `post-encounter-note-rubric`.
-- Grading prompt setup or mode assignment; use `test-station-grading`.
+- Generating synthetic student notes or transcripts; use `generate-student-artifact`.
+- Dry-run grading a sample artifact against a rubric; use `grading-dry-run`.
+- Analyzing a trial grade sheet for routine rubric improvements; use `evaluate-dry-run`. Use `content-validation` only when a dry-run finding needs clinical-validity, fairness, safety, severity, or consensus adjudication.
 - Live patient simulation case design; treat as out of scope for this rubric-focused plugin.
 
 ## Workflow

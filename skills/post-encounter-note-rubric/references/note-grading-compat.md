@@ -15,7 +15,7 @@
 
 ## Purpose
 
-Use this reference when drafting post-encounter-note rubrics that will be loaded into the upstream Rubric Maker app and graded in the test-station workflow. The skill should not merely produce clinically reasonable rubric rows. It should produce rows that survive the app's import, enrichment, prompt-building, section grouping, scoring, and evidence-display behavior.
+Use this reference when drafting post-encounter-note rubrics that will be loaded into Rubric Maker grading workflows. The skill should not merely produce clinically reasonable rubric rows. It should produce rows that survive import, enrichment, prompt-building, section grouping, scoring, and evidence-display behavior.
 
 The compatible output is still the standard Rubric Maker YAML shape:
 
@@ -36,9 +36,9 @@ rubric:
 
 ## Upstream Mental Model
 
-The Rubric Maker app test-station grading workflow treats rubric rows as evidence-specific grading tasks. For note-mode rows, the evidence source is the student's written post-encounter note, not the SP script, video, transcript, examiner memory, or hidden case key.
+Rubric Maker grading workflows treat rubric rows as evidence-specific grading tasks. For note-mode rows, the evidence source is the student's written post-encounter note, not the SP script, video, transcript, examiner memory, or hidden case key.
 
-The app's grading service enriches and reshapes rubric rows before it calls the grading model:
+The grading service enriches and reshapes rubric rows before it calls the grading model:
 
 - `QuestionName` becomes `QuestionText` in the grading prompt.
 - `Category` becomes `Section` when no explicit section is present.
@@ -62,7 +62,7 @@ Every generated item must include these fields:
 - `Purpose`: Clinical or educational rationale.
 - `AdditionalContext`: Case-specific constraints, acceptable alternatives, uncertainty, or grading cautions. Use an empty string when there is nothing to add.
 
-Do not include app-generated fields such as `CaseID`, `ItemNum`, `ItemKey`, `QuestionText`, `Response1`, `MaxRating`, or `Section` unless the user specifically asks for the test-station CSV shape. The YAML rubric should stay in the Rubric Maker schema.
+Do not include system-generated fields such as `CaseID`, `ItemNum`, `ItemKey`, `QuestionText`, `Response1`, `MaxRating`, or `Section` unless the user specifically asks for an expanded grading-export shape. The YAML rubric should stay in the Rubric Maker schema.
 
 ## Field-by-Field Authoring Implications
 
@@ -125,7 +125,7 @@ Always use:
 Mode: "note"
 ```
 
-Do not use `video` or `audio` in this skill. When the user needs mixed modes, route to `test-station-grading`.
+Do not use `video` or `audio` in this skill. When the user needs to test the draft rubric against a sample note or transcript, route to `grading-dry-run`. When the user needs a synthetic sample artifact first, route to `generate-student-artifact`.
 
 ### Technique
 
@@ -238,7 +238,8 @@ Do not reward documentation of facts that contradict the case. When a learner do
 
 ## Compatibility Pitfalls
 
-- Mixed modes in a note rubric: route to `test-station-grading`.
+- Requests to grade a sample note or transcript: route to `grading-dry-run`.
+- Requests to generate a sample note or transcript: route to `generate-student-artifact`.
 - Physical exam technique in `Technique`: rewrite as note evidence, such as "Look for documented cardiac exam findings."
 - Vague score anchors: replace "good", "adequate", or "complete" with specific note evidence.
 - Hidden-case-only requirements: move constraints into `AdditionalContext` or omit the item.

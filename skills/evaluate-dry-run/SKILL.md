@@ -1,0 +1,52 @@
+---
+name: evaluate-dry-run
+description: Analyze an OSCE case, draft rubric, example student artifact, and validated trial grade sheet to identify dry-run friction and produce prioritized rubric-improvement suggestions. Use when an agent needs to convert grading ambiguity, evidence mismatch, weak scoring discrimination, missing case-critical expectations, or safety and fairness concerns into structured rubric edits.
+---
+
+# Evaluate Dry Run
+
+## Use For
+
+- Analyzing a completed dry run that includes case materials, a draft rubric, a student artifact, and a validated trial grade sheet.
+- Finding rubric issues revealed by provisional grading rather than by rubric text alone.
+- Producing prioritized rubric-improvement suggestions plus narrative dry-run findings.
+- Explaining why grading friction occurred and how the rubric could better support reliable assessment.
+
+## Do Not Use For
+
+- Producing the trial grade sheet; use `grading-dry-run`.
+- Generating synthetic student artifacts; use `generate-student-artifact`.
+- Applying edits directly to the rubric; use `osce-rubric-transform`.
+- Adjudicating disputed clinical fixes or high-stakes educator disagreements; use `content-validation`.
+- Broad rubric review without dry-run evidence; use `osce-rubric-review`.
+
+## Inputs
+
+Expected inputs are case materials, rubric, student artifact, validated trial
+grade sheet, and optional educator goals. If the grade sheet has not been
+validated, ask for validation or clearly mark any findings that depend on
+uncertain grading output.
+
+## Workflow
+
+1. Align the case priorities, expected learner tasks, rubric items, artifact evidence, and provisional scores.
+2. Identify dry-run failure patterns: ambiguous anchors, unsupported items, missing expectations, evidence mismatch, redundancy, weak score discrimination, poor weighting, unsafe behavior, or fairness impact.
+3. Separate artifact performance problems from rubric problems. Suggest rubric edits only when the dry run shows the rubric is unclear, incomplete, misweighted, unobservable, or unreliable.
+4. Prioritize findings by assessment impact, safety/fairness risk, and likelihood that the issue will recur.
+5. Return narrative findings first, then structured suggestions using exact current rubric values.
+6. When a suggested fix is clinically uncertain or policy-sensitive, mark it for `content-validation` instead of overclaiming.
+
+## Output Guidance
+
+- Use `critical`, `high`, `medium`, or `low` priority.
+- Preserve exact `current_value` text from the source rubric.
+- Use locations like `3:Technique` or `4:ScoringLogic.Score2`.
+- Prefer one comprehensive suggestion per affected rubric cell.
+- Return `[]` for `suggestions` when the dry run reveals no actionable rubric edits.
+
+## References
+
+- Load `references/rubric-schema.md` for the shared rubric and suggestion fields.
+- Load `references/dry-run-failure-patterns.md` when classifying dry-run findings.
+- Load `references/suggestion-contract.md` before producing or validating structured suggestions.
+- Use `scripts/validate_dry_run_suggestions.py` to check suggestion JSON or YAML when deterministic validation is useful.

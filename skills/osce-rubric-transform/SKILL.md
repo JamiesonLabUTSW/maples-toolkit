@@ -1,6 +1,6 @@
 ---
 name: osce-rubric-transform
-description: This skill should be used when the user asks to adapt an OSCE rubric to a new case, patient population, clinical setting, learner role, scoring scale, or institutional template; "add score levels"; "fill missing Purpose or Technique"; "expand Technique examples"; "apply this rubric as a template"; or "restyle this target rubric" while preserving clinical intent.
+description: This skill should be used when the user asks to adapt an OSCE rubric to a new case, patient population, clinical setting, learner role, scoring scale, institutional template, or accepted dry-run finding; "add score levels"; "fill missing Purpose or Technique"; "expand Technique examples"; "apply this rubric as a template"; or "restyle this target rubric" while preserving clinical intent.
 ---
 
 # OSCE Rubric Transform
@@ -12,6 +12,7 @@ description: This skill should be used when the user asks to adapt an OSCE rubri
 - Adding or refining `ScoringLogic.ScoreN` levels when the user asks for a new scoring scale or more granular performance bands.
 - Filling missing `Purpose`, `Technique`, or `AdditionalContext` fields for existing rubric rows.
 - Applying naming, phrasing, score-anchor style, field density, or institutional template patterns from a reference rubric to a target rubric.
+- Applying accepted rubric-improvement suggestions produced by dry-run evaluation.
 
 ## Do Not Use For
 
@@ -19,12 +20,14 @@ description: This skill should be used when the user asks to adapt an OSCE rubri
 - Adjudicating whether a disputed concern or proposed fix is clinically valid, severe, fair, or preferred; use `content-validation`.
 - Mechanical import from source files, CSV/XLSX extracts, tables, checklists, or prose guides; use `rubric-import`.
 - New post-encounter-note rubric drafting from case materials; use `post-encounter-note-rubric`.
-- Grading prompt setup, evidence requirements, or mode assignment for video/audio/note test-station grading; use `test-station-grading`.
+- Generating synthetic student notes or transcripts; use `generate-student-artifact`.
+- Dry-run grading a student artifact against a rubric or producing a trial grade sheet; use `grading-dry-run`.
+- Evaluating a dry-run grade sheet for rubric improvement opportunities; use `evaluate-dry-run`.
 - Live virtual patient simulation case design; treat as out of scope for this rubric-focused plugin.
 
 ## Sibling Sequence
 
-Use `osce-rubric-review` to discover broad rubric issues. Use `content-validation` when a finding, proposed fix, or transformation would change clinical facts or needs validity/severity adjudication. Use `osce-rubric-transform` when the user wants selected rubric content, scoring, missing fields, or style changes implemented as suggestions or an explicit complete rewrite.
+Use `osce-rubric-review` to discover broad rubric issues. Use `evaluate-dry-run` to identify changes based on a case, sample artifact, and trial grade sheet. Use `content-validation` when a finding, proposed fix, or transformation would change clinical facts or needs validity/severity adjudication. Use `osce-rubric-transform` when the user wants selected rubric content, scoring, missing fields, dry-run findings, or style changes implemented as suggestions or an explicit complete rewrite.
 
 ## Workflow
 

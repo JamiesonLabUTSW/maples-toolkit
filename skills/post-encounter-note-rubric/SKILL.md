@@ -1,15 +1,15 @@
 ---
 name: post-encounter-note-rubric
-description: Draft new note-only post-encounter-note OSCE grading rubrics from case files, station instructions, SP scripts, expected findings, sample notes, checklists, or clinical scenarios. Use when an agent needs to synthesize case materials into Rubric Maker app-compatible note-mode YAML for SOAP notes, clinical documentation, assessment/plan, differential diagnosis, or written post-encounter-note evaluation. Do not use for importing existing rubrics, transforming or reviewing existing rubrics, mixed video/audio/note mode setup, grading prompt setup, or live simulation case design.
+description: Draft new note-only post-encounter-note OSCE grading rubrics from case files, station instructions, SP scripts, expected findings, sample notes, checklists, or clinical scenarios. Use when an agent needs to synthesize case materials into Rubric Maker app-compatible note-mode YAML for SOAP notes, clinical documentation, assessment/plan, differential diagnosis, or written post-encounter-note evaluation. Do not use for importing existing rubrics, transforming or reviewing existing rubrics, generating sample student artifacts, dry-run grading, or live simulation case design.
 ---
 
 # Post Encounter Note Rubric
 
 ## Overview
 
-Create a draft OSCE post-encounter-note rubric from case materials. The output must be a note-only Rubric Maker rubric that can feed the upstream test-station note-grading workflow. Each rubric item has `Category`, `QuestionName`, `ScoringLogic`, `Mode`, `Technique`, `Purpose`, and `AdditionalContext`.
+Create a draft OSCE post-encounter-note rubric from case materials. The output must be a note-only Rubric Maker rubric that can feed downstream note-grading workflows. Each rubric item has `Category`, `QuestionName`, `ScoringLogic`, `Mode`, `Technique`, `Purpose`, and `AdditionalContext`.
 
-Use `Mode: note` for every item. If the user asks for mixed video/audio/note assessment, mode splitting, or grading prompt setup, stop using this skill and use `test-station-grading`.
+Use `Mode: note` for every item. If the user asks for a sample student note or transcript, use `generate-student-artifact`. If the user asks to grade a sample artifact against a rubric, use `grading-dry-run`.
 
 ## Use For
 
@@ -24,12 +24,14 @@ Use `Mode: note` for every item. If the user asks for mixed video/audio/note ass
 - Reviewing an existing rubric for quality, safety, objectivity, missing fields, or improvement suggestions; use `osce-rubric-review`.
 - Transforming, restyling, adapting, expanding score levels, or filling missing fields in an existing rubric; use `osce-rubric-transform`.
 - Validating a disputed concern, proposed fix, clinical-validity question, severity, or consensus recommendation; use `content-validation`.
-- Assigning modes, splitting a rubric across video/audio/note evidence, designing grading prompts, or preparing test-station grading workflows; use `test-station-grading`.
+- Generating synthetic student notes or transcripts for rubric testing; use `generate-student-artifact`.
+- Dry-run grading a student artifact against a rubric or producing a trial grade sheet; use `grading-dry-run`.
+- Analyzing a trial grade sheet to identify rubric improvements; use `evaluate-dry-run`.
 - Designing live virtual patient simulation cases; treat as out of scope for this rubric-focused plugin.
 
 ## Sibling Sequence
 
-Use `post-encounter-note-rubric` when the starting point is case material and the desired output is a new written-note rubric. After drafting, use `osce-rubric-review` for a broad quality audit, `content-validation` for contested clinical concerns, `osce-rubric-transform` for requested rewrites or score-scale changes, and `test-station-grading` when the user needs grading prompts or mixed evidence setup.
+Use `post-encounter-note-rubric` when the starting point is case material and the desired output is a new written-note rubric. After drafting, use `osce-rubric-review` for a broad quality audit, `content-validation` for contested clinical concerns, `osce-rubric-transform` for requested rewrites or score-scale changes, `generate-student-artifact` to create sample learner outputs, `grading-dry-run` to produce a trial grade sheet, and `evaluate-dry-run` to turn dry-run friction into rubric improvement suggestions.
 
 ## Workflow
 

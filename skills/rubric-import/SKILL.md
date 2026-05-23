@@ -1,6 +1,6 @@
 ---
 name: rubric-import
-description: Import existing rubric source material such as CSV, XLSX extracts, tables, checklists, or prose scoring guides into Rubric Maker YAML or JSON while preserving source wording. Use when an agent needs to convert an already-authored rubric or scoring guide into Category, QuestionName, ScoringLogic, Mode, Technique, Purpose, and AdditionalContext fields. Do not use for drafting new rubrics from case materials, improving/adapting existing rubrics, reviewing rubric quality, clinical-validity adjudication, or test-station grading setup.
+description: Import existing rubric source material such as CSV, XLSX extracts, tables, checklists, or prose scoring guides into Rubric Maker YAML or JSON while preserving source wording. Use when an agent needs to convert an already-authored rubric or scoring guide into Category, QuestionName, ScoringLogic, Mode, Technique, Purpose, and AdditionalContext fields. Do not use for drafting new rubrics from case materials, improving/adapting existing rubrics, reviewing rubric quality, clinical-validity adjudication, synthetic artifact generation, or dry-run grading.
 ---
 
 # Rubric Import
@@ -26,12 +26,14 @@ The bright line: use this skill when the user already has a rubric, checklist, s
 - Reviewing an existing rubric for safety, objectivity, observability, feasibility, reliability, scoring clarity, or missing-field problems; use `osce-rubric-review`.
 - Improving, adapting, restyling, expanding score levels, filling missing fields, applying a template, or rewriting rubric content; use `osce-rubric-transform`.
 - Deciding whether a disputed rubric concern, proposed fix, severity, or clinical interpretation is valid; use `content-validation`.
-- Splitting items by evidence source, designing grading prompts, or preparing video/audio/note grading workflows; use `test-station-grading`.
+- Generating synthetic student notes or transcripts; use `generate-student-artifact`.
+- Dry-run grading an imported rubric against a sample artifact or producing a trial grade sheet; use `grading-dry-run`.
+- Analyzing a trial grade sheet for rubric improvements; use `evaluate-dry-run`.
 - Designing live virtual patient simulation cases; treat that as outside this rubric-import skill.
 
 ## Sibling Sequence
 
-Use `rubric-import` first when source material must be preserved and converted into the schema. After import, use `osce-rubric-review` for broad quality auditing, `content-validation` for contested clinical concerns, `osce-rubric-transform` for requested changes or missing-field fills, and `test-station-grading` when the user needs evidence-mode grading setup.
+Use `rubric-import` first when source material must be preserved and converted into the schema. After import, use `osce-rubric-review` for broad quality auditing, `content-validation` for contested clinical concerns, `osce-rubric-transform` for requested changes or missing-field fills, `generate-student-artifact` for synthetic learner outputs, `grading-dry-run` for trial grade sheets, and `evaluate-dry-run` for dry-run-driven improvement suggestions.
 
 If the user asks both to import and improve a rubric, import faithfully first, then clearly separate any proposed improvements as a downstream `osce-rubric-transform` or `osce-rubric-review` task. Do not silently blend preservation and improvement.
 
@@ -56,7 +58,7 @@ If the user asks both to import and improve a rubric, import faithfully first, t
 
 ## Mode Boundary
 
-Infer `Mode` only to normalize imported rows. If the user asks whether items can be scored from specific evidence, wants items split across video/audio/note, or needs grading prompts or evidence requirements, stop using this skill and use `test-station-grading`.
+Infer `Mode` only to normalize imported rows. If the user asks whether a rubric works against a sample note, transcript, or observation log, stop using this skill and use `grading-dry-run`. If the user asks what rubric changes the dry run implies, use `evaluate-dry-run`.
 
 ## Output Boundary
 

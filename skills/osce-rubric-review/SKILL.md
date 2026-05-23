@@ -1,6 +1,6 @@
 ---
 name: osce-rubric-review
-description: Review OSCE rubrics for clinical alignment, safety, observability, objectivity, feasibility, reliability, scoring clarity, missing Technique/Purpose fields, and Rubric Maker suggestion output. Use when an agent needs to audit an existing rubric, produce clarifying questions, or generate structured improvement suggestions. Use content-validation instead when a specific concern or proposed fix needs clinical-validity adjudication, severity, consensus, or educator-guided tie-breaking.
+description: Review OSCE rubrics for clinical alignment, safety, observability, objectivity, feasibility, reliability, scoring clarity, missing Technique/Purpose fields, and Rubric Maker suggestion output. Use when an agent needs to audit an existing rubric, produce clarifying questions, or generate structured improvement suggestions. Use evaluate-dry-run instead when the critique is based on a trial grade sheet, and use content-validation when a specific concern or proposed fix needs clinical-validity adjudication, severity, consensus, or educator-guided tie-breaking.
 ---
 
 # OSCE Rubric Review
@@ -18,12 +18,14 @@ description: Review OSCE rubrics for clinical alignment, safety, observability, 
 - Direct adaptation, restyling, score expansion, or template application as the main task; use `osce-rubric-transform`.
 - Mechanical import from source files; use `rubric-import`.
 - New post-encounter-note rubric drafting; use `post-encounter-note-rubric`.
-- Grading prompt setup, evidence requirements, or mode assignment for test-station grading; use `test-station-grading`.
+- Generating synthetic student notes or transcripts; use `generate-student-artifact`.
+- Dry-run grading a sample artifact against a rubric or producing a trial grade sheet; use `grading-dry-run`.
+- Analyzing a trial grade sheet to identify rubric improvements; use `evaluate-dry-run`.
 - Live patient simulation case design; treat as out of scope for this rubric-focused plugin.
 
 ## Sibling Sequence
 
-Use `osce-rubric-review` to discover and frame rubric issues. Escalate selected findings to `content-validation` when their clinical validity, severity, fairness, safety impact, or best fix is contested or high-stakes. Use `osce-rubric-transform` after review or validation when the user wants the rubric content adapted or rewritten.
+Use `osce-rubric-review` to discover and frame rubric issues before dry-run testing. Use `evaluate-dry-run` when the user already has a case, artifact, and trial grade sheet and wants improvements based on how the rubric behaved in practice. Escalate selected findings to `content-validation` when their clinical validity, severity, fairness, safety impact, or best fix is contested or high-stakes. Use `osce-rubric-transform` after review, validation, or dry-run evaluation when the user wants the rubric content adapted or rewritten.
 
 ## Workflow
 

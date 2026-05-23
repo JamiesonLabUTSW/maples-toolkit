@@ -1,7 +1,7 @@
 {
   "name": "rubric-maker-skill",
   "version": "0.1.0",
-  "description": "Codex skills from the UT REAL Project MAPLES research group for creating, importing, reviewing, transforming, validating, and formatting OSCE rubrics.",
+  "description": "Codex skills from the UT REAL Project MAPLES research group for creating, importing, reviewing, transforming, dry-running, validating, and formatting OSCE rubrics.",
   "author": {
     "name": "UT REAL Project MAPLES",
     "url": "https://ut-real-ai-project-maples.com/"
@@ -19,7 +19,7 @@
   "interface": {
     "displayName": "Rubric Maker Skills",
     "shortDescription": "OSCE rubric creation and review skills",
-    "longDescription": "A Codex plugin published by the UT REAL Project MAPLES research group containing skills for drafting post-encounter-note rubrics, importing source documents, reviewing OSCE rubrics, transforming rubrics, preparing test-station grading, and validating rubric content.",
+    "longDescription": "A Codex plugin published by the UT REAL Project MAPLES research group containing skills for drafting post-encounter-note rubrics, importing source documents, reviewing OSCE rubrics, transforming rubrics, generating synthetic student artifacts, dry-run grading draft rubrics, evaluating dry-run results, and validating rubric content.",
     "developerName": "UT REAL Project MAPLES",
     "category": "Education",
     "websiteURL": "https://ut-real-ai-project-maples.com/",
@@ -30,7 +30,9 @@
     "defaultPrompt": [
       "Draft a post-encounter-note rubric.",
       "Convert this rubric source to YAML.",
-      "Review this OSCE rubric."
+      "Review this OSCE rubric.",
+      "Generate a sample student note for this case.",
+      "Dry-run grade this sample note against the draft rubric."
     ]
   }
 }
