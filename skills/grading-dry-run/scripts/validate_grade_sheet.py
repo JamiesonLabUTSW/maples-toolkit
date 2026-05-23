@@ -14,6 +14,12 @@ from typing import Any
 
 VALID_ARTIFACT_TYPES = {"note", "transcript", "observation_log"}
 VALID_CONFIDENCE = {"high", "medium", "low"}
+VALID_ITEM_MODES = {"audio", "note", "video"}
+SUPPORTED_ARTIFACTS_BY_MODE = {
+    "audio": {"transcript"},
+    "note": {"note"},
+    "video": {"observation_log", "transcript"},
+}
 TOTAL_TOLERANCE = 0.01
 
 
@@ -91,7 +97,53 @@ def validate_evidence(evidence: Any, path: str) -> list[ValidationIssue]:
     return issues
 
 
-def validate_item(item: Any, index: int) -> tuple[list[ValidationIssue], dict[str, Any] | None]:
+def validate_item_mode(
+    item: dict[str, Any],
+    path: str,
+    artifact_type: Any,
+    unscorable: bool,
+) -> list[ValidationIssue]:
+    issues: list[ValidationIssue] = []
+    if "mode" not in item:
+        return issues
+
+    mode = item.get("mode")
+    if not is_nonempty_string(mode):
+        issues.append(ValidationIssue(f"{path}.mode", "must be a nonempty string when present"))
+        return issues
+
+    if mode not in VALID_ITEM_MODES:
+        if not unscorable:
+            issues.append(
+                ValidationIssue(
+                    f"{path}.mode",
+                    f"unsupported mode {mode!r}; scored rows must use one of {sorted(VALID_ITEM_MODES)}",
+                )
+            )
+        return issues
+
+    if artifact_type not in VALID_ARTIFACT_TYPES:
+        return issues
+
+    supported_artifacts = SUPPORTED_ARTIFACTS_BY_MODE[mode]
+    if artifact_type not in supported_artifacts and not unscorable:
+        issues.append(
+            ValidationIssue(
+                f"{path}.mode",
+                (
+                    f"mode {mode!r} is not scoreable from artifact_type {artifact_type!r}; "
+                    "mark the row unscorable"
+                ),
+            )
+        )
+    return issues
+
+
+def validate_item(
+    item: Any,
+    index: int,
+    artifact_type: Any,
+) -> tuple[list[ValidationIssue], dict[str, Any] | None]:
     path = f"$.items[{index}]"
     issues: list[ValidationIssue] = []
     if not isinstance(item, dict):
@@ -113,6 +165,8 @@ def validate_item(item: Any, index: int) -> tuple[list[ValidationIssue], dict[st
     if not isinstance(unscorable, bool):
         issues.append(ValidationIssue(f"{path}.unscorable", "must be a boolean when present"))
         unscorable = False
+
+    issues.extend(validate_item_mode(item, path, artifact_type, unscorable))
 
     if unscorable:
         if not is_nonempty_string(item.get("unscorable_reason")):
@@ -275,7 +329,7 @@ def validate_grade_sheet(data: Any) -> list[ValidationIssue]:
 
     scored_items: list[dict[str, Any]] = []
     for index, item in enumerate(items):
-        item_issues, scored_item = validate_item(item, index)
+        item_issues, scored_item = validate_item(item, index, artifact_type)
         issues.extend(item_issues)
         if scored_item is not None:
             scored_items.append(scored_item)

@@ -59,6 +59,17 @@ Optional row fields:
 - `score_anchor`: selected rubric anchor key, such as `Score3`.
 - `caveat`: brief uncertainty that affects confidence.
 
+## Item Mode Compatibility
+
+When present, `mode` should be one of `note`, `audio`, or `video`.
+
+- `note` rows may be scored only when `artifact_type` is `note`.
+- `audio` rows may be scored from `transcript` text.
+- `video` rows may be scored from `observation_log` text or transcript text that explicitly documents observations.
+- Any unsupported `mode`, or any supported mode paired with an incompatible `artifact_type`, must be marked `unscorable: true` instead of scored.
+
+Raw audio and raw video are never inspected by this skill. A transcript, note, or observation log must already exist as text evidence.
+
 ## Evidence Shape
 
 `evidence` may be a nonempty string or a nonempty array of evidence objects.

@@ -43,10 +43,16 @@ uncertain grading output.
 - Use locations like `3:Technique` or `4:ScoringLogic.Score2`.
 - Prefer one comprehensive suggestion per affected rubric cell.
 - Return `[]` for `suggestions` when the dry run reveals no actionable rubric edits.
+- When deterministic validation is needed, pass the source rubric to
+  `scripts/validate_dry_run_suggestions.py --rubric <rubric-file> <suggestions-file>`
+  so the validator can enforce row, field, subfield, and exact
+  `current_value` matches. Without `--rubric`, the script performs shape-only
+  validation plus internal location consistency checks.
 
 ## References
 
 - Load `references/rubric-schema.md` for the shared rubric and suggestion fields.
 - Load `references/dry-run-failure-patterns.md` when classifying dry-run findings.
 - Load `references/suggestion-contract.md` before producing or validating structured suggestions.
-- Use `scripts/validate_dry_run_suggestions.py` to check suggestion JSON or YAML when deterministic validation is useful.
+- Use `scripts/validate_dry_run_suggestions.py` to check suggestion JSON or YAML.
+  Include `--rubric` whenever exact source-value enforcement is required.

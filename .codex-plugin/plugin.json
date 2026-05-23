@@ -32,7 +32,8 @@
       "Convert this rubric source to YAML.",
       "Review this OSCE rubric.",
       "Generate a sample student note for this case.",
-      "Dry-run grade this sample note against the draft rubric."
+      "Dry-run grade this sample note against the draft rubric.",
+      "Evaluate this dry-run grading result and suggest rubric improvements."
     ]
   }
 }

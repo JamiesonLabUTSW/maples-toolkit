@@ -1,4 +1,4 @@
 interface:
   display_name: "Generate Student Artifact"
   short_description: "Create synthetic OSCE learner artifacts"
-  default_prompt: "Use $generate-student-artifact to create a synthetic student note or transcript from these case materials."
+  default_prompt: "Use $generate-student-artifact to create a synthetic student note, transcript, or transcript-derived observation log."

@@ -110,6 +110,23 @@ def unwrap_suggestions(data: Any) -> tuple[list[Any] | None, set[str], list[Vali
     return suggestions, finding_ids, issues
 
 
+def unwrap_rubric(data: Any) -> tuple[list[Any] | None, list[ValidationIssue]]:
+    if isinstance(data, list):
+        return data, []
+    if isinstance(data, dict) and isinstance(data.get("rubric"), list):
+        return data["rubric"], []
+    return None, [
+        ValidationIssue("$", "rubric must be a raw array or an object with a rubric array")
+    ]
+
+
+def load_rubric(path: Path) -> tuple[list[Any] | None, list[ValidationIssue]]:
+    try:
+        return unwrap_rubric(load_data(path))
+    except Exception as exc:  # noqa: BLE001 - CLI should report parse/dependency errors.
+        return None, [ValidationIssue("$", str(exc))]
+
+
 def validate_findings(findings: list[Any], finding_ids: set[str]) -> list[ValidationIssue]:
     issues: list[ValidationIssue] = []
     required = {"id", "pattern", "priority", "dry_run_evidence", "impact"}
@@ -249,7 +266,7 @@ def validate_suggestion(
         if field in item and not isinstance(item[field], str):
             issues.append(ValidationIssue(f"{path}.{field}", "must be a string"))
 
-    for field in ("reasoning", "current_value", "suggested_value"):
+    for field in ("reasoning", "suggested_value"):
         if field in item and not is_nonempty_text(item[field]):
             issues.append(ValidationIssue(f"{path}.{field}", "must be nonempty text"))
 
@@ -299,12 +316,96 @@ def validate_suggestion(
     return issues
 
 
-def validate_suggestions(data: Any) -> list[ValidationIssue]:
+def validate_against_rubric(
+    item: Any,
+    index: int,
+    rubric: list[Any],
+) -> list[ValidationIssue]:
+    path = f"$.suggestions[{index}]"
+    if not isinstance(item, dict):
+        return []
+
+    row = item.get("row")
+    field = item.get("field")
+    sub = item.get("sub")
+    if (
+        not isinstance(row, int)
+        or isinstance(row, bool)
+        or row < 0
+        or field not in RUBRIC_FIELDS
+        or (sub is not None and not isinstance(sub, str))
+        or "current_value" not in item
+    ):
+        return []
+
+    issues: list[ValidationIssue] = []
+    if row >= len(rubric):
+        return [
+            ValidationIssue(
+                f"{path}.row",
+                f"does not exist in rubric with {len(rubric)} row(s)",
+            )
+        ]
+
+    rubric_row = rubric[row]
+    if not isinstance(rubric_row, dict):
+        return [ValidationIssue(f"{path}.row", "source rubric row must be an object")]
+
+    if field not in rubric_row:
+        return [ValidationIssue(f"{path}.field", "does not exist in source rubric row")]
+
+    source_value = rubric_row[field]
+    if sub is not None:
+        if field != "ScoringLogic":
+            return [
+                ValidationIssue(
+                    f"{path}.sub",
+                    "cannot be used with non-ScoringLogic rubric fields",
+                )
+            ]
+        if not isinstance(source_value, dict):
+            return [
+                ValidationIssue(
+                    f"{path}.field",
+                    "source rubric ScoringLogic must be an object when sub is provided",
+                )
+            ]
+        if sub not in source_value:
+            return [ValidationIssue(f"{path}.sub", "does not exist in source ScoringLogic")]
+        source_value = source_value[sub]
+    elif field == "ScoringLogic" and isinstance(source_value, dict):
+        return [
+            ValidationIssue(
+                f"{path}.sub",
+                "is required to validate exact current_value for ScoringLogic.ScoreN anchors",
+            )
+        ]
+
+    if not isinstance(source_value, str):
+        issues.append(
+            ValidationIssue(
+                f"{path}.current_value",
+                "source rubric value must be a string for exact current_value validation",
+            )
+        )
+    elif item.get("current_value") != source_value:
+        issues.append(
+            ValidationIssue(
+                f"{path}.current_value",
+                "must exactly match the source rubric value at row/field/sub",
+            )
+        )
+    return issues
+
+
+def validate_suggestions(data: Any, rubric: list[Any] | None = None) -> list[ValidationIssue]:
     suggestions, finding_ids, issues = unwrap_suggestions(data)
     if suggestions is None:
         return issues
     for index, item in enumerate(suggestions):
         issues.extend(validate_suggestion(item, index, finding_ids))
+        if rubric is not None:
+            issues.extend(validate_against_rubric(item, index, rubric))
     return issues
 
 
@@ -313,6 +414,14 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         description="Validate dry-run rubric-improvement suggestion YAML or JSON."
     )
     parser.add_argument("inputs", nargs="+", help="Suggestion YAML or JSON files to validate")
+    parser.add_argument(
+        "--rubric",
+        help=(
+            "Optional source rubric YAML or JSON. When provided, row/field/sub targets and "
+            "current_value are validated against the rubric. Without it, only suggestion shape "
+            "and internal consistency are checked."
+        ),
+    )
     parser.add_argument(
         "--json",
         action="store_true",
@@ -325,11 +434,20 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv or sys.argv[1:])
     results: dict[str, list[dict[str, str]]] = {}
     exit_code = 0
+    rubric: list[Any] | None = None
+
+    if args.rubric:
+        rubric, rubric_issues = load_rubric(Path(args.rubric))
+        if rubric_issues:
+            exit_code = 1
+            results[str(Path(args.rubric))] = [
+                {"path": issue.path, "message": issue.message} for issue in rubric_issues
+            ]
 
     for raw_path in args.inputs:
         path = Path(raw_path)
         try:
-            issues = validate_suggestions(load_data(path))
+            issues = validate_suggestions(load_data(path), rubric)
         except Exception as exc:  # noqa: BLE001 - CLI should report parse/dependency errors.
             issues = [ValidationIssue("$", str(exc))]
 

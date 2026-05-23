@@ -14,7 +14,7 @@ Licensed under the UT Southwestern academic research use release terms in [LICEN
 | `rubric-import` | Import existing rubric source material into Rubric Maker YAML or JSON while preserving wording. Includes document extraction and render scripts. |
 | `osce-rubric-review` | Review OSCE rubrics for alignment, safety, observability, objectivity, feasibility, reliability, and scoring clarity. |
 | `osce-rubric-transform` | Adapt or enhance OSCE rubrics for new cases, contexts, scoring scales, missing fields, or style templates. |
-| `generate-student-artifact` | Generate synthetic student notes or encounter transcripts from a case and learner performance profile. |
+| `generate-student-artifact` | Generate synthetic student notes, encounter transcripts, or transcript-derived observation logs from a case and learner performance profile. |
 | `grading-dry-run` | Dry-run grade a student note, transcript, or observation log against an OSCE rubric and produce an evidence-backed trial grade sheet. |
 | `evaluate-dry-run` | Analyze a case, rubric, student artifact, and trial grade sheet to identify rubric improvements. |
 | `content-validation` | Validate rubric issues through multi-perspective critique and final recommendations. |
@@ -337,7 +337,7 @@ application source files, external prompt templates, or a separate web runtime.
 | Transform or enhance rubrics | Yes, as skill-guided analysis | No |
 | Validate rubric YAML/JSON shape | Yes, via validation scripts | No |
 | Render rubric YAML/JSON to XLSX/DOCX | Yes, via render script | No |
-| Generate synthetic notes or transcripts for rubric testing | Yes | No |
+| Generate synthetic notes, transcripts, or transcript-derived observation logs for rubric testing | Yes | No |
 | Dry-run grade notes, transcripts, or timestamped observation logs | Yes, with deterministic grade-sheet checks | No |
 | Inspect raw audio/video or run queued grading jobs | No | Yes |
 | Persist assessments, versions, suggestions, and grading jobs | No | Yes |

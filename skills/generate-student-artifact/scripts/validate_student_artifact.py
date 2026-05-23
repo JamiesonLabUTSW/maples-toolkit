@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 
-VALID_ARTIFACT_TYPES = {"note", "transcript"}
+VALID_ARTIFACT_TYPES = {"note", "observation_log", "transcript"}
 REQUIRED_TOP_LEVEL_FIELDS = {"artifact_type", "artifact_text", "metadata"}
 OPTIONAL_TOP_LEVEL_FIELDS = {
     "rubric_focus",
@@ -27,7 +27,11 @@ REQUIRED_METADATA_FIELDS = {
     "learner_profile",
     "limitations",
 }
-OPTIONAL_METADATA_FIELDS = {"assumptions", "source_materials_summary"}
+OPTIONAL_METADATA_FIELDS = {
+    "assumptions",
+    "source_materials_summary",
+    "source_transcript_summary",
+}
 ALLOWED_METADATA_FIELDS = REQUIRED_METADATA_FIELDS | OPTIONAL_METADATA_FIELDS
 
 
@@ -179,8 +183,17 @@ def validate_artifact(data: Any) -> list[ValidationIssue]:
             )
         )
 
-    if "artifact_text" in data and not is_nonempty_string(data["artifact_text"]):
+    artifact_text = data.get("artifact_text")
+    if "artifact_text" in data and not is_nonempty_string(artifact_text):
         issues.append(ValidationIssue("$.artifact_text", "must be a nonempty string"))
+    elif artifact_type == "observation_log" and is_nonempty_string(artifact_text):
+        if ":" not in artifact_text and "-" not in artifact_text:
+            issues.append(
+                ValidationIssue(
+                    "$.artifact_text",
+                    "observation_log should contain timestamped or row-delimited observations",
+                )
+            )
 
     for field in ("target_performance_band", "template_name", "title"):
         if field in data:
@@ -189,8 +202,17 @@ def validate_artifact(data: Any) -> list[ValidationIssue]:
     if "rubric_focus" in data:
         issues.extend(validate_optional_string_list(data["rubric_focus"], "$.rubric_focus"))
 
+    metadata = data.get("metadata")
     if "metadata" in data:
-        issues.extend(validate_metadata(data["metadata"]))
+        issues.extend(validate_metadata(metadata))
+        if artifact_type == "observation_log" and isinstance(metadata, dict):
+            if not is_nonempty_string(metadata.get("source_transcript_summary")):
+                issues.append(
+                    ValidationIssue(
+                        "$.metadata.source_transcript_summary",
+                        "is required for observation_log artifacts",
+                    )
+                )
 
     return issues
 

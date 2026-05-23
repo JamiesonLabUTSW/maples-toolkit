@@ -59,3 +59,18 @@ Transcript guidance:
 - Include enough turns to show the requested strengths and weaknesses.
 - Keep patient details consistent with supplied case materials.
 - Let omissions remain omitted; do not add narrator notes explaining what was missed.
+
+## Transcript-Derived Observation Log
+
+```text
+00:00 - Student opens encounter and confirms the patient's main concern.
+00:02 - Student asks about symptom onset and associated symptoms.
+00:05 - Student provides counseling or summarizes next steps.
+```
+
+Observation-log guidance:
+
+- Use this only when a transcript has already been supplied or generated.
+- Derive each row from transcript text; do not invent visual findings or native media observations.
+- Use timestamps as approximate transcript-relative markers when exact timestamps are unavailable.
+- Keep rows concise and observable.

@@ -39,6 +39,27 @@ def run_command(args: list[str]) -> None:
         raise RuntimeError(f"{' '.join(args)} failed with exit code {completed.returncode}\n{output}")
 
 
+def run_expected_failure(args: list[str], expected_snippets: list[str]) -> None:
+    completed = subprocess.run(
+        args,
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    output = "\n".join(
+        part for part in [completed.stdout.strip(), completed.stderr.strip()] if part
+    )
+    if completed.returncode == 0:
+        raise RuntimeError(f"{' '.join(args)} unexpectedly passed\n{output}")
+
+    missing = [snippet for snippet in expected_snippets if snippet not in output]
+    if missing:
+        raise RuntimeError(
+            f"{' '.join(args)} failed without expected output {missing}\n{output}"
+        )
+
+
 def main() -> int:
     run_command([sys.executable, str(REPO_ROOT / "scripts" / "verify_plugin_compat.py")])
     print("PASS plugin compatibility")
@@ -71,6 +92,33 @@ def main() -> int:
         run_command([sys.executable, str(STUDENT_ARTIFACT_VALIDATOR), str(student_artifact)])
         print("PASS generate-student-artifact validation smoke")
 
+        invalid_observation_log = tmpdir / "invalid_observation_log.json"
+        invalid_observation_log.write_text(
+            """{
+  "artifact_type": "observation_log",
+  "artifact_text": "The learner asks several questions but sequence is unclear.",
+  "metadata": {
+    "case_summary_used": "Adult with acute chest pain.",
+    "intentional_strengths": ["Asks about onset"],
+    "intentional_weaknesses": ["Does not establish chronology"],
+    "learner_profile": {
+      "level": "Clerkship student"
+    },
+    "limitations": ["Synthetic artifact for rubric testing"]
+  }
+}
+""",
+            encoding="utf-8",
+        )
+        run_expected_failure(
+            [sys.executable, str(STUDENT_ARTIFACT_VALIDATOR), str(invalid_observation_log)],
+            [
+                "$.artifact_text: observation_log should contain timestamped or row-delimited observations",
+                "$.metadata.source_transcript_summary: is required for observation_log artifacts",
+            ],
+        )
+        print("PASS generate-student-artifact negative validation smoke")
+
         dry_run_suggestions = tmpdir / "dry_run_suggestions.json"
         dry_run_suggestions.write_text(
             """{
@@ -91,6 +139,111 @@ def main() -> int:
         )
         run_command([sys.executable, str(DRY_RUN_SUGGESTION_VALIDATOR), str(dry_run_suggestions)])
         print("PASS evaluate-dry-run suggestion validation smoke")
+
+        source_rubric = tmpdir / "source_rubric.yaml"
+        source_rubric.write_text(
+            """rubric:
+  - Category: "History"
+    QuestionName: "Documents chest pain details"
+    ScoringLogic:
+      Score1: "No chest pain details are documented."
+      Score2: "Some chest pain details are documented."
+    Mode: "note"
+    Technique: "Assess the note."
+    Purpose: "Evaluates documentation of the presenting concern."
+    AdditionalContext: ""
+""",
+            encoding="utf-8",
+        )
+        run_command(
+            [
+                sys.executable,
+                str(DRY_RUN_SUGGESTION_VALIDATOR),
+                "--rubric",
+                str(source_rubric),
+                str(dry_run_suggestions),
+            ]
+        )
+        print("PASS evaluate-dry-run rubric-backed suggestion validation smoke")
+
+        mismatched_current_value = tmpdir / "mismatched_current_value.json"
+        mismatched_current_value.write_text(
+            """{
+  "suggestions": [
+    {
+      "location": "0:Technique",
+      "current_value": "Assess the plan.",
+      "suggested_value": "Look for explicit documentation of chest pain onset, radiation, associated symptoms, and pertinent negatives.",
+      "reasoning": "The dry run showed graders could not map vague technique text to note evidence.",
+      "priority": "high",
+      "row": 0,
+      "field": "Technique"
+    }
+  ]
+}
+""",
+            encoding="utf-8",
+        )
+        run_expected_failure(
+            [
+                sys.executable,
+                str(DRY_RUN_SUGGESTION_VALIDATOR),
+                "--rubric",
+                str(source_rubric),
+                str(mismatched_current_value),
+            ],
+            ["$.suggestions[0].current_value: must exactly match the source rubric value"],
+        )
+        print("PASS evaluate-dry-run rubric-backed negative validation smoke")
+
+        invalid_dry_run_suggestions = tmpdir / "invalid_dry_run_suggestions.json"
+        invalid_dry_run_suggestions.write_text(
+            """{
+  "findings": [
+    {
+      "id": "F1",
+      "pattern": "weak_discrimination",
+      "priority": "medium",
+      "dry_run_evidence": "All sample artifacts received the same score.",
+      "impact": "The rubric does not separate partial from complete performance."
+    }
+  ],
+  "suggestions": [
+    {
+      "location": "2:Technique.Score2",
+      "current_value": "Assess the plan.",
+      "suggested_value": "Separate recognition of red flags from counseling quality.",
+      "reasoning": "The grade sheet showed the current item bundles distinct behaviors.",
+      "priority": "urgent",
+      "row": 1,
+      "field": "Technique",
+      "sub": "Score1",
+      "finding_id": "F2",
+      "failure_pattern": "unsupported_pattern",
+      "confidence": "certain"
+    }
+  ]
+}
+""",
+            encoding="utf-8",
+        )
+        run_expected_failure(
+            [
+                sys.executable,
+                str(DRY_RUN_SUGGESTION_VALIDATOR),
+                str(invalid_dry_run_suggestions),
+            ],
+            [
+                "$.suggestions[0].priority: must be one of",
+                "$.suggestions[0].finding_id: must reference a finding id",
+                "$.suggestions[0].failure_pattern: must be one of",
+                "$.suggestions[0].confidence: must be one of",
+                "$.suggestions[0].location: row 2 does not match row field 1",
+                "$.suggestions[0].sub: must match 'Score2'",
+                "$.suggestions[0].location: ScoreN suffixes are only valid for ScoringLogic suggestions",
+            ],
+        )
+        print("PASS evaluate-dry-run negative suggestion validation smoke")
 
     run_command([sys.executable, str(GRADING_DRY_RUN_SMOKE)])
     print("PASS grading-dry-run smoke")
