@@ -1,4 +1,4 @@
 interface:
   display_name: "Post Encounter Note Rubric"
-  short_description: "Draft note rubrics from case files"
-  default_prompt: "Use $post-encounter-note-rubric to draft a note-grading rubric from these case files."
+  short_description: "Draft note-only OSCE rubrics from case files"
+  default_prompt: "Use $post-encounter-note-rubric to draft a Rubric Maker app-compatible note-only rubric from these case files."
