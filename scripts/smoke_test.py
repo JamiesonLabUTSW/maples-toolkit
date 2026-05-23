@@ -10,7 +10,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RUBRIC_IMPORT_SMOKE = (
-    REPO_ROOT / "skills" / "rubric-import-structure" / "scripts" / "smoke_test.py"
+    REPO_ROOT / "skills" / "rubric-import" / "scripts" / "smoke_test.py"
 )
 
 
@@ -37,7 +37,7 @@ def main() -> int:
     print("PASS schema sync")
 
     run_command([sys.executable, str(RUBRIC_IMPORT_SMOKE)])
-    print("PASS rubric-import-structure smoke")
+    print("PASS rubric-import smoke")
 
     print("PASS repository smoke test")
     return 0

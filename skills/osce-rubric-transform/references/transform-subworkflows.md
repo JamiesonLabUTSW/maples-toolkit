@@ -554,7 +554,7 @@ Use `content-validation` before this skill when a proposed transformation may
 change clinical facts, learner expectations, fairness, safety, severity, or
 validity, or when multiple interpretations are disputed.
 
-Use `rubric-import-structure` before this skill when the source material still
+Use `rubric-import` before this skill when the source material still
 needs to be converted into Rubric Maker YAML or JSON.
 
 Use `post-encounter-note-rubric` instead of this skill when creating a new

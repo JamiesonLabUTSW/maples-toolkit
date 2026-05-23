@@ -20,7 +20,7 @@ Use `Mode: note` for every item. If the user asks for mixed video/audio/note ass
 
 ## Do Not Use For
 
-- Importing or preserving an existing rubric, table, CSV/XLSX extract, checklist, or prose scoring guide as-is; use `rubric-import-structure`.
+- Importing or preserving an existing rubric, table, CSV/XLSX extract, checklist, or prose scoring guide as-is; use `rubric-import`.
 - Reviewing an existing rubric for quality, safety, objectivity, missing fields, or improvement suggestions; use `osce-rubric-review`.
 - Transforming, restyling, adapting, expanding score levels, or filling missing fields in an existing rubric; use `osce-rubric-transform`.
 - Validating a disputed concern, proposed fix, clinical-validity question, severity, or consensus recommendation; use `content-validation`.

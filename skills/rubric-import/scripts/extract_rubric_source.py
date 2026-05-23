@@ -2,7 +2,7 @@
 """Extract rubric source text from common document formats.
 
 This script does not generate a rubric. It converts source files into a
-clean Markdown/text bundle that Codex can use with the rubric-import-structure
+clean Markdown/text bundle that Codex can use with the rubric-import
 or post-encounter-note-rubric skills.
 """
 

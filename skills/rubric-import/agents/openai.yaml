@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rubric Import"
+  short_description: "Import source rubrics"
+  default_prompt: "Use $rubric-import to convert this source rubric into Rubric Maker YAML."

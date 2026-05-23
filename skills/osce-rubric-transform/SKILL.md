@@ -17,7 +17,7 @@ description: This skill should be used when the user asks to adapt an OSCE rubri
 
 - Broad first-pass rubric audits or issue discovery; use `osce-rubric-review`.
 - Adjudicating whether a disputed concern or proposed fix is clinically valid, severe, fair, or preferred; use `content-validation`.
-- Mechanical import from source files, CSV/XLSX extracts, tables, checklists, or prose guides; use `rubric-import-structure`.
+- Mechanical import from source files, CSV/XLSX extracts, tables, checklists, or prose guides; use `rubric-import`.
 - New post-encounter-note rubric drafting from case materials; use `post-encounter-note-rubric`.
 - Grading prompt setup, evidence requirements, or mode assignment for video/audio/note test-station grading; use `test-station-grading`.
 - Live virtual patient simulation case design; treat as out of scope for this rubric-focused plugin.

@@ -134,7 +134,7 @@ Use `osce-rubric-transform` for direct adaptation, restyling, score expansion, T
 
 Use `post-encounter-note-rubric` to create note-mode rubrics from case materials. Use `content-validation` for debated documentation expectations, safety-critical omissions, or whether a note criterion fits the learner and case.
 
-Use `rubric-import-structure` to convert source material into Rubric Maker YAML or JSON. Do not use `content-validation` for mechanical import. Use it after import if preserved source wording contains questionable clinical criteria or conflicting score anchors.
+Use `rubric-import` to convert source material into Rubric Maker YAML or JSON. Do not use `content-validation` for mechanical import. Use it after import if preserved source wording contains questionable clinical criteria or conflicting score anchors.
 
 Use `test-station-grading` for mode assignment, evidence requirements, and grading prompt setup for video, audio, or note evidence. Use `content-validation` when the evidence mode or scoring basis raises a substantive validity concern.
 

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Rubric Import Structure"
-  short_description: "Structure uploaded rubrics"
-  default_prompt: "Use $rubric-import-structure to convert this source rubric into Rubric Maker YAML."

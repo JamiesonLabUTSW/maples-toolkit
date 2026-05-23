@@ -16,7 +16,7 @@ description: Review OSCE rubrics for clinical alignment, safety, observability, 
 
 - Adjudicating a disputed concern, proposed fix, severity, or consensus recommendation; use `content-validation`.
 - Direct adaptation, restyling, score expansion, or template application as the main task; use `osce-rubric-transform`.
-- Mechanical import from source files; use `rubric-import-structure`.
+- Mechanical import from source files; use `rubric-import`.
 - New post-encounter-note rubric drafting; use `post-encounter-note-rubric`.
 - Grading prompt setup, evidence requirements, or mode assignment for test-station grading; use `test-station-grading`.
 - Live patient simulation case design; treat as out of scope for this rubric-focused plugin.

@@ -16,7 +16,7 @@ description: Validate specific OSCE rubric concerns for clinical validity, asses
 
 - Broad first-pass rubric audits; use `osce-rubric-review`.
 - Direct adaptation, restyling, score expansion, or template application; use `osce-rubric-transform`.
-- Mechanical import from source files; use `rubric-import-structure`.
+- Mechanical import from source files; use `rubric-import`.
 - New post-encounter-note rubric drafting; use `post-encounter-note-rubric`.
 - Grading prompt setup or mode assignment; use `test-station-grading`.
 - Live patient simulation case design; treat as out of scope for this rubric-focused plugin.

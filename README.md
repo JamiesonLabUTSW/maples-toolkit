@@ -11,7 +11,7 @@ Licensed under the UT Southwestern academic research use release terms in [LICEN
 | Skill | Use |
 |---|---|
 | `post-encounter-note-rubric` | Draft a `Mode: note` post-encounter-note grading rubric from case files, station instructions, SP scripts, sample notes, or clinical scenarios. |
-| `rubric-import-structure` | Convert pasted or extracted source material into Rubric Maker YAML or JSON. Includes document extraction and render scripts. |
+| `rubric-import` | Import existing rubric source material into Rubric Maker YAML or JSON while preserving wording. Includes document extraction and render scripts. |
 | `osce-rubric-review` | Review OSCE rubrics for alignment, safety, observability, objectivity, feasibility, reliability, and scoring clarity. |
 | `osce-rubric-transform` | Adapt or enhance OSCE rubrics for new cases, contexts, scoring scales, missing fields, or style templates. |
 | `test-station-grading` | Prepare mode-aware rubrics and grading instructions for video, audio, or note evidence. |
@@ -162,7 +162,7 @@ Use $post-encounter-note-rubric to draft a rubric from these case files.
 ```
 
 ```text
-Use $rubric-import-structure to convert this source table into Rubric Maker YAML.
+Use $rubric-import to convert this source table into Rubric Maker YAML.
 ```
 
 ```text
@@ -175,12 +175,12 @@ Use $test-station-grading to prepare this rubric for note and video grading.
 
 ## Document And Output Scripts
 
-`rubric-import-structure` includes two helper scripts.
+`rubric-import` includes two helper scripts.
 
 Extract source material from DOCX, PDF, Excel, CSV, TSV, TXT, or Markdown:
 
 ```bash
-python3 skills/rubric-import-structure/scripts/extract_rubric_source.py \
+python3 skills/rubric-import/scripts/extract_rubric_source.py \
   case.docx rubric.xlsx \
   -o extracted-source.md
 ```
@@ -188,13 +188,13 @@ python3 skills/rubric-import-structure/scripts/extract_rubric_source.py \
 Render a Rubric Maker rubric YAML or JSON file to formatted Excel:
 
 ```bash
-python3 skills/rubric-import-structure/scripts/render_rubric.py rubric.yaml -o rubric.xlsx
+python3 skills/rubric-import/scripts/render_rubric.py rubric.yaml -o rubric.xlsx
 ```
 
 Render the same rubric to a formatted Word document:
 
 ```bash
-python3 skills/rubric-import-structure/scripts/render_rubric.py rubric.yaml -o rubric.docx
+python3 skills/rubric-import/scripts/render_rubric.py rubric.yaml -o rubric.docx
 ```
 
 ## Script Dependencies
@@ -257,13 +257,13 @@ Valid `Mode` values are `video`, `audio`, and `note`.
 Validate a generated rubric before rendering:
 
 ```bash
-python3 skills/rubric-import-structure/scripts/validate_rubric.py rubric.yaml
+python3 skills/rubric-import/scripts/validate_rubric.py rubric.yaml
 ```
 
 Validate structured suggestions before applying or sharing them:
 
 ```bash
-python3 skills/rubric-import-structure/scripts/validate_suggestions.py suggestions.json
+python3 skills/rubric-import/scripts/validate_suggestions.py suggestions.json
 ```
 
 Validate a skill with the local skill creator validator:
@@ -311,7 +311,7 @@ The skill-local deterministic tooling smoke test can also be run after a direct
 skill install:
 
 ```bash
-python3 skills/rubric-import-structure/scripts/smoke_test.py
+python3 skills/rubric-import/scripts/smoke_test.py
 ```
 
 ## Runtime Boundaries
