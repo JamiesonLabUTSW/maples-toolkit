@@ -9,6 +9,7 @@ This repository packages Rubric Maker skills for Codex CLI and Claude Code.
 - Skill folders: `skills/<skill-name>/`
 - Canonical rubric schema: `references/rubric-schema.md`
 - Skill-local schema copies: `skills/<skill-name>/references/rubric-schema.md`
+- Canonical grade-sheet schema: `references/grade-sheet-contract.md`
 
 Each skill must remain self-contained. Do not add skill instructions that depend on files outside that skill folder unless the same file is also bundled inside the skill.
 
@@ -21,9 +22,10 @@ Before pushing changes, run:
 ```bash
 python3 scripts/verify_plugin_compat.py
 python3 scripts/verify_schema_sync.py
+python3 scripts/verify_grade_sheet_schema_sync.py
 ```
 
-Treat either failing check as a blocking issue. `verify_plugin_compat.py` enforces Agent Skills naming/frontmatter rules, Codex and Claude Code manifest presence/alignment, skill-local schema sync, and packaging hygiene.
+Treat any failing check as a blocking issue. `verify_plugin_compat.py` enforces Agent Skills naming/frontmatter rules, Codex and Claude Code manifest presence/alignment, skill-local schema sync, grade-sheet contract and validator sync, and packaging hygiene.
 
 If the canonical schema changes, update every skill-local schema copy before pushing:
 
@@ -32,6 +34,36 @@ for d in skills/*/references; do
   cp references/rubric-schema.md "$d/rubric-schema.md"
 done
 python3 scripts/verify_schema_sync.py
+```
+
+`references/grade-sheet-contract.md` is the canonical bundled grade-sheet schema.
+Every skill-local `references/grade-sheet-contract.md` copy must match it
+exactly. Every skill with a grade-sheet contract must also bundle
+`scripts/validate_grade_sheet.py`, and copied grade-sheet validators must match
+the canonical validator from `skills/grading-dry-run/scripts/validate_grade_sheet.py`.
+
+If the grade-sheet contract changes, update every skill-local grade-sheet
+contract copy and verify sync:
+
+```bash
+for d in skills/*/references; do
+  if [ -f "$d/grade-sheet-contract.md" ]; then
+    cp references/grade-sheet-contract.md "$d/grade-sheet-contract.md"
+  fi
+done
+python3 scripts/verify_grade_sheet_schema_sync.py
+```
+
+If the grade-sheet validator changes, update every skill-local validator copy
+and verify sync:
+
+```bash
+for d in skills/*/scripts; do
+  if [ -f "$d/validate_grade_sheet.py" ]; then
+    cp skills/grading-dry-run/scripts/validate_grade_sheet.py "$d/validate_grade_sheet.py"
+  fi
+done
+python3 scripts/verify_grade_sheet_schema_sync.py
 ```
 
 ## Validation
