@@ -1,6 +1,6 @@
 ---
 name: evaluate-dry-run
-description: Analyze an OSCE case, draft rubric, example student artifact, and validated trial grade sheet to identify dry-run friction and produce prioritized rubric-improvement suggestions. Use when an agent needs to convert grading ambiguity, evidence mismatch, weak scoring discrimination, missing case-critical expectations, or safety and fairness concerns into structured rubric edits.
+description: Analyze an OSCE case, draft rubric, example student artifact, and validated trial grade sheet to identify dry-run friction and produce prioritized rubric-improvement suggestions. Use when dry-run evidence shows grading ambiguity, evidence mismatch, weak scoring discrimination, missing case-critical expectations, or safety and fairness concerns.
 ---
 
 # Evaluate Dry Run
@@ -20,21 +20,35 @@ description: Analyze an OSCE case, draft rubric, example student artifact, and v
 - Adjudicating disputed clinical fixes or high-stakes educator disagreements; use `content-validation`.
 - Broad rubric review without dry-run evidence; use `osce-rubric-review`.
 
+## Sibling Sequence
+
+Use `generate-student-artifact` when a realistic learner output is needed, then
+`grading-dry-run` to produce and validate the trial grade sheet. Use
+`evaluate-dry-run` after that validated grade sheet exists to identify
+rubric-improvement suggestions from dry-run friction. Escalate selected findings
+to `content-validation` when clinical validity, fairness, safety, severity, or
+consensus is disputed. Use `osce-rubric-transform` when the user wants accepted
+changes rewritten or applied as rubric suggestions.
+
 ## Inputs
 
 Expected inputs are case materials, rubric, student artifact, validated trial
-grade sheet, and optional educator goals. If the grade sheet has not been
-validated, ask for validation or clearly mark any findings that depend on
-uncertain grading output.
+grade sheet, and optional educator goals. If the grade sheet is supplied as a
+file, validate it with `scripts/validate_grade_sheet.py <grade-sheet-file>`
+before analysis. If the grade sheet is pasted or otherwise cannot be validated
+mechanically, ask for a file when deterministic validation is needed, or clearly
+mark any findings that depend on uncertain grading output.
 
 ## Workflow
 
-1. Align the case priorities, expected learner tasks, rubric items, artifact evidence, and provisional scores.
-2. Identify dry-run failure patterns: ambiguous anchors, unsupported items, missing expectations, evidence mismatch, redundancy, weak score discrimination, poor weighting, unsafe behavior, or fairness impact.
-3. Separate artifact performance problems from rubric problems. Suggest rubric edits only when the dry run shows the rubric is unclear, incomplete, misweighted, unobservable, or unreliable.
-4. Prioritize findings by assessment impact, safety/fairness risk, and likelihood that the issue will recur.
-5. Return narrative findings first, then structured suggestions using exact current rubric values.
-6. When a suggested fix is clinically uncertain or policy-sensitive, mark it for `content-validation` instead of overclaiming.
+1. Load `references/grade-sheet-contract.md` to interpret grade-sheet fields, evidence shape, unscorable rows, confidence, totals, and grading-friction notes.
+2. Validate a saved grade sheet with `scripts/validate_grade_sheet.py <grade-sheet-file>` before using it as evidence.
+3. Align the case priorities, expected learner tasks, rubric items, artifact evidence, and provisional scores.
+4. Identify dry-run failure patterns: ambiguous anchors, unsupported items, missing expectations, evidence mismatch, redundancy, weak score discrimination, poor weighting, unsafe behavior, or fairness impact.
+5. Separate artifact performance problems from rubric problems. Suggest rubric-improvement changes only when the dry run shows the rubric is unclear, incomplete, misweighted, unobservable, or unreliable.
+6. Prioritize findings by assessment impact, safety/fairness risk, and likelihood that the issue will recur.
+7. Return narrative findings first, then structured suggestions using exact current rubric values.
+8. When a suggested fix is clinically uncertain or policy-sensitive, mark it for `content-validation` instead of overclaiming.
 
 ## Output Guidance
 
@@ -42,7 +56,7 @@ uncertain grading output.
 - Preserve exact `current_value` text from the source rubric.
 - Use locations like `3:Technique` or `4:ScoringLogic.Score2`.
 - Prefer one comprehensive suggestion per affected rubric cell.
-- Return `[]` for `suggestions` when the dry run reveals no actionable rubric edits.
+- Return `[]` for `suggestions` when the dry run reveals no actionable rubric-improvement changes.
 - When deterministic validation is needed, pass the source rubric to
   `scripts/validate_dry_run_suggestions.py --rubric <rubric-file> <suggestions-file>`
   so the validator can enforce row, field, subfield, and exact
@@ -52,7 +66,9 @@ uncertain grading output.
 ## References
 
 - Load `references/rubric-schema.md` for the shared rubric and suggestion fields.
+- Load `references/grade-sheet-contract.md` before interpreting a trial grade sheet.
 - Load `references/dry-run-failure-patterns.md` when classifying dry-run findings.
 - Load `references/suggestion-contract.md` before producing or validating structured suggestions.
+- Use `scripts/validate_grade_sheet.py` to check grade-sheet JSON or YAML before analysis.
 - Use `scripts/validate_dry_run_suggestions.py` to check suggestion JSON or YAML.
   Include `--rubric` whenever exact source-value enforcement is required.

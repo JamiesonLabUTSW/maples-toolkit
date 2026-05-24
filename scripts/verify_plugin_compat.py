@@ -13,6 +13,12 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
 CANONICAL_SCHEMA = REPO_ROOT / "references" / "rubric-schema.md"
 SCHEMA_RELATIVE_PATH = Path("references") / "rubric-schema.md"
+CANONICAL_GRADE_SHEET_CONTRACT = REPO_ROOT / "references" / "grade-sheet-contract.md"
+CANONICAL_GRADE_SHEET_VALIDATOR = (
+    REPO_ROOT / "skills" / "grading-dry-run" / "scripts" / "validate_grade_sheet.py"
+)
+GRADE_SHEET_CONTRACT_RELATIVE_PATH = Path("references") / "grade-sheet-contract.md"
+GRADE_SHEET_VALIDATOR_RELATIVE_PATH = Path("scripts") / "validate_grade_sheet.py"
 NAME_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$")
 FORBIDDEN_UPSTREAM_PATTERNS = (
@@ -127,6 +133,24 @@ def validate_skills(errors: list[str]) -> None:
     canonical_bytes = CANONICAL_SCHEMA.read_bytes() if CANONICAL_SCHEMA.is_file() else None
     if canonical_bytes is None:
         errors.append(f"missing canonical schema: {rel(CANONICAL_SCHEMA)}")
+    grade_sheet_contract_bytes = (
+        CANONICAL_GRADE_SHEET_CONTRACT.read_bytes()
+        if CANONICAL_GRADE_SHEET_CONTRACT.is_file()
+        else None
+    )
+    if grade_sheet_contract_bytes is None:
+        errors.append(
+            f"missing canonical grade-sheet contract: {rel(CANONICAL_GRADE_SHEET_CONTRACT)}"
+        )
+    grade_sheet_validator_bytes = (
+        CANONICAL_GRADE_SHEET_VALIDATOR.read_bytes()
+        if CANONICAL_GRADE_SHEET_VALIDATOR.is_file()
+        else None
+    )
+    if grade_sheet_validator_bytes is None:
+        errors.append(
+            f"missing canonical grade-sheet validator: {rel(CANONICAL_GRADE_SHEET_VALIDATOR)}"
+        )
 
     for path in skill_files:
         metadata, text = frontmatter(path, errors)
@@ -151,6 +175,31 @@ def validate_skills(errors: list[str]) -> None:
             errors.append(f"missing {rel(schema_path)}")
         elif canonical_bytes is not None and schema_path.read_bytes() != canonical_bytes:
             errors.append(f"schema drift detected in {rel(schema_path)}")
+
+        grade_sheet_contract_path = skill_dir / GRADE_SHEET_CONTRACT_RELATIVE_PATH
+        grade_sheet_validator_path = skill_dir / GRADE_SHEET_VALIDATOR_RELATIVE_PATH
+        uses_grade_sheet_contract = grade_sheet_contract_path.is_file()
+        uses_grade_sheet_validator = grade_sheet_validator_path.is_file()
+        if uses_grade_sheet_contract:
+            if (
+                grade_sheet_contract_bytes is not None
+                and grade_sheet_contract_path.read_bytes() != grade_sheet_contract_bytes
+            ):
+                errors.append(
+                    f"grade-sheet contract drift detected in {rel(grade_sheet_contract_path)}"
+                )
+            if not uses_grade_sheet_validator:
+                errors.append(
+                    f"missing {rel(grade_sheet_validator_path)} for skill with grade-sheet contract"
+                )
+        if (
+            uses_grade_sheet_validator
+            and grade_sheet_validator_bytes is not None
+            and grade_sheet_validator_path.read_bytes() != grade_sheet_validator_bytes
+        ):
+            errors.append(
+                f"grade-sheet validator drift detected in {rel(grade_sheet_validator_path)}"
+            )
 
 
 def validate_packaging_hygiene(errors: list[str]) -> None:

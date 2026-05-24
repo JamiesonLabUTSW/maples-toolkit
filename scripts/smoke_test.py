@@ -22,6 +22,9 @@ GRADING_DRY_RUN_SMOKE = (
 DRY_RUN_SUGGESTION_VALIDATOR = (
     REPO_ROOT / "skills" / "evaluate-dry-run" / "scripts" / "validate_dry_run_suggestions.py"
 )
+EVALUATE_DRY_RUN_GRADE_SHEET_VALIDATOR = (
+    REPO_ROOT / "skills" / "evaluate-dry-run" / "scripts" / "validate_grade_sheet.py"
+)
 
 
 def run_command(args: list[str]) -> None:
@@ -66,6 +69,11 @@ def main() -> int:
 
     run_command([sys.executable, str(REPO_ROOT / "scripts" / "verify_schema_sync.py")])
     print("PASS schema sync")
+
+    run_command(
+        [sys.executable, str(REPO_ROOT / "scripts" / "verify_grade_sheet_schema_sync.py")]
+    )
+    print("PASS grade-sheet schema sync")
 
     run_command([sys.executable, str(RUBRIC_IMPORT_SMOKE)])
     print("PASS rubric-import smoke")
@@ -118,6 +126,37 @@ def main() -> int:
             ],
         )
         print("PASS generate-student-artifact negative validation smoke")
+
+        grade_sheet = tmpdir / "grade_sheet.json"
+        grade_sheet.write_text(
+            """{
+  "artifact_type": "note",
+  "evidence_sources": ["note"],
+  "items": [
+    {
+      "item_id": "0",
+      "category": "History",
+      "question_name": "Documents chest pain details",
+      "max_score": 2,
+      "score": 1,
+      "evidence": "Chest pain began two hours ago.",
+      "rationale": "The note documents onset but omits associated symptoms.",
+      "confidence": "high",
+      "mode": "note",
+      "score_anchor": "Score1"
+    }
+  ],
+  "total_score": 1,
+  "max_score": 2,
+  "percentage": 50
+}
+""",
+            encoding="utf-8",
+        )
+        run_command(
+            [sys.executable, str(EVALUATE_DRY_RUN_GRADE_SHEET_VALIDATOR), str(grade_sheet)]
+        )
+        print("PASS evaluate-dry-run grade-sheet validation smoke")
 
         dry_run_suggestions = tmpdir / "dry_run_suggestions.json"
         dry_run_suggestions.write_text(

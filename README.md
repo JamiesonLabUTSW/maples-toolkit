@@ -299,6 +299,13 @@ Verify that every skill-local schema copy matches the canonical schema:
 python3 scripts/verify_schema_sync.py
 ```
 
+Verify that every skill-local grade-sheet contract and validator copy matches
+the canonical grade-sheet artifacts:
+
+```bash
+python3 scripts/verify_grade_sheet_schema_sync.py
+```
+
 Validate Agent Skills, Codex plugin, and Claude Code plugin compatibility invariants:
 
 ```bash
@@ -339,6 +346,7 @@ application source files, external prompt templates, or a separate web runtime.
 | Render rubric YAML/JSON to XLSX/DOCX | Yes, via render script | No |
 | Generate synthetic notes, transcripts, or transcript-derived observation logs for rubric testing | Yes | No |
 | Dry-run grade notes, transcripts, timestamped observation logs, or transcript-plus-observations bundles | Yes, with deterministic grade-sheet checks | No |
+| Evaluate dry-run grade sheets for rubric-improvement suggestions | Yes, with bundled grade-sheet validation and schema sync checks | No |
 | Inspect raw audio/video or run queued grading jobs | No | Yes |
 | Persist assessments, versions, suggestions, and grading jobs | No | Yes |
 | Run live AI patient simulator sessions | Case design only | Yes |
