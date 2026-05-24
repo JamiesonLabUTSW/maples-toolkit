@@ -60,7 +60,7 @@ Do not add future plugin-specific packages only to the root requirements file.
 
 Root developer-only tooling belongs in the root `pyproject.toml` `dev` dependency group,
 not in plugin runtime requirements.
-The current dev tools are Ruff, ty, and Flowmark.
+The current dev tools are Ruff, ty, Flowmark, and pre-commit.
 Use `make dev-install` to create `.venv/` and install the dev group with pip, or install
 the same dependency group with another PEP 735-compatible tool.
 `uv` is optional and must not become the only documented way to run checks.
@@ -75,8 +75,16 @@ make check
 
 `make check` runs Ruff lint, Ruff format check, Flowmark lint, ty, and the marketplace
 smoke/compatibility checks.
-Focused targets include `make lint`, `make format-check`, `make typecheck`, and
-`make format`.
+Focused targets include `make python-check`, `make markdown-check`, `make lint`,
+`make format-check`, `make typecheck`, and `make format`.
+
+Use `make pre-commit-install` to install local pre-commit hooks.
+The hooks should stay fast and non-mutating; they run Makefile-backed lint,
+format-check, and type-check targets.
+
+Pull requests targeting `main` run `.github/workflows/ci.yml`. Keep CI jobs topical and
+parallelizable where possible, and run checks through Makefile targets rather than raw
+tool commands.
 
 Do not run raw `flowmark --auto` on this repository.
 The Flowmark version used by the dev dependency group expands `--auto` to include smart
