@@ -1,6 +1,6 @@
 ---
 name: grading-dry-run
-description: Produce provisional OSCE grade sheets from a Rubric Maker rubric and text-based student artifact. Use when an agent needs to dry-run scoring against a draft rubric using post-encounter-note text, transcript text, or a timestamped observation log, with evidence, rationale, confidence, subtotals, totals, and deterministic grade-sheet validation. Do not use for generating student artifacts, revising rubrics, adjudicating clinical validity, or inspecting raw audio/video.
+description: Produce provisional OSCE grade sheets from a Rubric Maker rubric and text analogues of OSCE evidence. Use when an agent needs to dry-run scoring against a draft rubric using post-encounter-note text, transcript text for audio evidence, observation-log text for video evidence, or a transcript-plus-observations bundle, with evidence, rationale, confidence, subtotals, totals, and deterministic grade-sheet validation. Do not use for generating student artifacts, revising rubrics, adjudicating clinical validity, or inspecting raw audio/video.
 ---
 
 # Grading Dry Run
@@ -21,13 +21,24 @@ description: Produce provisional OSCE grade sheets from a Rubric Maker rubric an
 - Importing source rubrics; use `rubric-import`.
 - Inspecting raw audio or video. Ask for a transcript, note, or timestamped observation log first.
 
+## Inputs
+
+- Rubric in Rubric Maker YAML or JSON.
+- Text analogue evidence:
+  - `note`: written post-encounter-note text for `Mode: note` rows.
+  - `transcript`: spoken encounter transcript for `Mode: audio` rows.
+  - `observation_log`: timestamped observed actions for `Mode: video` rows.
+  - `transcript_plus_observations`: transcript text plus observation-log rows for mixed `Mode: audio` and `Mode: video` grading.
+- Optional case context for checking contradictions or case-specific scoring constraints.
+- Requested output format, such as YAML, JSON, or a saved grade-sheet file.
+
 ## Workflow
 
 1. Load `references/rubric-schema.md` and `references/grade-sheet-contract.md`.
 2. Load `references/evidence-rules.md` for artifact-specific evidence boundaries.
 3. Load `references/scoring-rules.md` for scoring and total rules.
-4. Score each rubric item only from evidence present in the supplied artifact and supported by the item `mode`.
-5. Quote exact note or transcript text for scored items, or cite the supplied timestamped observation evidence.
+4. Score each rubric item only from evidence present in the supplied text analogue and supported by the item `mode`.
+5. Quote exact note or transcript text for note/audio scored items, and cite supplied observation evidence for video scored items.
 6. Mark unsupported items as unscorable instead of inferring across modalities or missing evidence.
 7. Produce a grade sheet matching `references/grade-sheet-contract.md`.
 8. Run `python3 scripts/validate_grade_sheet.py <grade-sheet-file>`.
@@ -38,9 +49,11 @@ description: Produce provisional OSCE grade sheets from a Rubric Maker rubric an
 - Include one `items` row per rubric item.
 - Each scored row must include `score`, `max_score`, `evidence`, `rationale`, and `confidence`.
 - Each unscorable row must include `unscorable: true`, `max_score`, and `unscorable_reason`.
-- If an item has `mode`, only score it from a compatible text artifact: `note` mode from note text, `audio` mode from transcript text, and `video` mode from transcript text that explicitly documents observations or from observation-log text.
+- If an item has `mode`, only score it from a compatible text analogue: `note` mode from note text, `audio` mode from transcript text, and `video` mode from observation-log evidence.
+- Use `artifact_type: transcript_plus_observations` when one dry run includes both audio transcript evidence and video observation evidence.
 - Raw audio and video are never inspected. Unsupported or incompatible item modes must be marked unscorable instead of scored.
-- Include `subtotals`, `total_score`, `max_score`, and `percentage` when the user requests a full grade sheet.
+- Include `subtotals`, `total_score`, `max_score`, and `percentage` when the user requests a full grade sheet. These totals are provisional scored-evidence totals that omit unscorable rows.
+- Include `unscorable_count` and `unscorable_max_score` when any rows are unscorable.
 - Keep rubric-change ideas separate as `grading_friction_notes`; do not rewrite the rubric in this skill.
 
 ## References

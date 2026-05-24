@@ -19,12 +19,12 @@ Mark a row as unscorable when:
 - The rubric item depends on facts outside the supplied artifact.
 - The item is too ambiguous to score mechanically from the artifact.
 
-Unscorable rows still keep `max_score`, but they are omitted from subtotal and total calculations because no provisional score was assigned.
+Unscorable rows still keep `max_score`, but they are omitted from subtotal and total calculations because no provisional score was assigned. Track denominator loss with `unscorable_count` and `unscorable_max_score` when any rows are unscorable.
 
 ## Totals
 
 - `total_score` is the sum of scored row `score` values.
 - `max_score` is the sum of scored row `max_score` values.
-- `percentage` is `total_score / max_score * 100`.
+- `percentage` is the provisional scored-evidence percentage: `total_score / max_score * 100`.
 - Subtotals use the same rule within each category or section.
 - If every row is unscorable, use `total_score: 0`, `max_score: 0`, and omit `percentage` or set it to `null`.

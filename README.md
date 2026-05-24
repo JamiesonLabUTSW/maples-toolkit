@@ -15,7 +15,7 @@ Licensed under the UT Southwestern academic research use release terms in [LICEN
 | `osce-rubric-review` | Review OSCE rubrics for alignment, safety, observability, objectivity, feasibility, reliability, and scoring clarity. |
 | `osce-rubric-transform` | Adapt or enhance OSCE rubrics for new cases, contexts, scoring scales, missing fields, or style templates. |
 | `generate-student-artifact` | Generate synthetic student notes, encounter transcripts, or transcript-derived observation logs from a case and learner performance profile. |
-| `grading-dry-run` | Dry-run grade a student note, transcript, or observation log against an OSCE rubric and produce an evidence-backed trial grade sheet. |
+| `grading-dry-run` | Dry-run grade a student note, transcript, observation log, or transcript-plus-observations bundle against an OSCE rubric and produce an evidence-backed trial grade sheet. |
 | `evaluate-dry-run` | Analyze a case, rubric, student artifact, and trial grade sheet to identify rubric improvements. |
 | `content-validation` | Validate rubric issues through multi-perspective critique and final recommendations. |
 
@@ -176,7 +176,7 @@ Use $generate-student-artifact to create an average learner note for this case.
 ```
 
 ```text
-Use $grading-dry-run to grade this sample note against the draft rubric.
+Use $grading-dry-run to grade this sample note, transcript, or transcript-plus-observations bundle against the draft rubric.
 ```
 
 ```text
@@ -338,7 +338,7 @@ application source files, external prompt templates, or a separate web runtime.
 | Validate rubric YAML/JSON shape | Yes, via validation scripts | No |
 | Render rubric YAML/JSON to XLSX/DOCX | Yes, via render script | No |
 | Generate synthetic notes, transcripts, or transcript-derived observation logs for rubric testing | Yes | No |
-| Dry-run grade notes, transcripts, or timestamped observation logs | Yes, with deterministic grade-sheet checks | No |
+| Dry-run grade notes, transcripts, timestamped observation logs, or transcript-plus-observations bundles | Yes, with deterministic grade-sheet checks | No |
 | Inspect raw audio/video or run queued grading jobs | No | Yes |
 | Persist assessments, versions, suggestions, and grading jobs | No | Yes |
 | Run live AI patient simulator sessions | Case design only | Yes |

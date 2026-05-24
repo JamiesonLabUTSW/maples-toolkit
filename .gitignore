@@ -11,9 +11,30 @@ trial/
 # Generated caches and environments.
 __pycache__/
 *.py[cod]
+*$py.class
 .pytest_cache/
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
 .venv/
 venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+pip-wheel-metadata/
+.hypothesis/
+.ipynb_checkpoints/
 
 # Local generated outputs.
 *.log
