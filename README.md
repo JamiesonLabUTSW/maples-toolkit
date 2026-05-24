@@ -2,7 +2,7 @@
 
 This repository is a marketplace for Codex CLI and Claude Code plugins published by the **UT REAL Project MAPLES** research group.
 
-The marketplace currently contains one installable plugin, Rubric Maker, plus placeholders for future Case Generation and Validation Analysis plugins.
+The marketplace currently contains one installable plugin, Rubric Maker, plus placeholder directories for future Case Generation and Validation Analysis plugins.
 
 ## Marketplace Layout
 
@@ -20,13 +20,17 @@ The marketplace currently contains one installable plugin, Rubric Maker, plus pl
 
 Each plugin is self-contained. Plugin manifests, skills, scripts, references, and Python requirements live inside `plugins/<plugin-name>/`.
 
+This layout follows the Codex repo marketplace pattern of `.agents/plugins/marketplace.json` with one `plugins[]` entry per tracked plugin and `./plugins/<plugin-name>` source paths. It also follows the Claude Code plugin convention where each plugin has its own `.claude-plugin/plugin.json` and component directories at the plugin root.
+
+The Codex marketplace keeps placeholder plugins visible with `policy.installation: "NOT_AVAILABLE"`. The Claude Code marketplace exposes only installable plugins because Claude marketplace entries do not have an equivalent unavailable policy.
+
 ## Plugins
 
 | Plugin | Status | Purpose |
 |---|---:|---|
 | `rubric-maker-skill` | Available | Skills and scripts for creating, importing, reviewing, transforming, dry-running, validating, and formatting OSCE rubrics. |
-| `case-generation` | Placeholder | Future case generation workflows and skills. |
-| `validation-analysis` | Placeholder | Future validation analysis workflows and skills. |
+| `case-generation` | Codex placeholder only | Future case generation workflows and skills. |
+| `validation-analysis` | Codex placeholder only | Future validation analysis workflows and skills. |
 
 ## Install From This Marketplace
 
@@ -96,6 +100,13 @@ for d in plugins/rubric-maker-skill/skills/*/; do
   fi
 done
 ```
+
+## Reference Patterns
+
+- Codex plugin marketplace docs: https://developers.openai.com/codex/plugins/build#marketplace-metadata
+- Codex official marketplace example: https://github.com/openai/plugins/blob/main/.agents/plugins/marketplace.json
+- Claude Code plugin structure docs: https://github.com/anthropics/claude-code/tree/main/plugins
+- Claude official marketplace example: https://github.com/anthropics/claude-plugins-official/blob/main/.claude-plugin/marketplace.json
 
 ## Plugin Documentation
 

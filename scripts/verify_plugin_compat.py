@@ -26,6 +26,14 @@ EXPECTED_PLUGINS = {
         "description": "Placeholder for future validation analysis workflows and skills.",
     },
 }
+CLAUDE_MARKETPLACE_PLUGINS = {"rubric-maker-skill"}
+EXPECTED_AUTHOR = {
+    "name": "UT REAL Project MAPLES",
+    "url": "https://ut-real-ai-project-maples.com/",
+}
+EXPECTED_CLAUDE_OWNER = {
+    "name": "UT REAL Project MAPLES",
+}
 
 
 def rel(path: Path) -> str:
@@ -103,21 +111,38 @@ def validate_claude_marketplace(errors: list[str]) -> None:
 
     if payload.get("name") != "ut-real-project-maples":
         errors.append(f"{rel(path)} name must be ut-real-project-maples")
+    if payload.get("$schema") != "https://anthropic.com/claude-code/marketplace.schema.json":
+        errors.append(f"{rel(path)} $schema must be the Claude Code marketplace schema URL")
+    if payload.get("description") != "Codex CLI and Claude Code plugins from the UT REAL Project MAPLES research group.":
+        errors.append(f"{rel(path)} description drifted")
+    if payload.get("version") != "0.1.0":
+        errors.append(f"{rel(path)} version must be 0.1.0")
+    if payload.get("owner") != EXPECTED_CLAUDE_OWNER:
+        errors.append(f"{rel(path)} owner drifted")
+    if "metadata" in payload:
+        errors.append(f"{rel(path)} should use top-level description/version instead of metadata")
     entries = payload.get("plugins")
     if not isinstance(entries, list):
         errors.append(f"{rel(path)} plugins must be an array")
         return
     by_name = {entry.get("name"): entry for entry in entries if isinstance(entry, dict)}
-    if set(by_name) != set(EXPECTED_PLUGINS):
-        errors.append(f"{rel(path)} plugins must be {sorted(EXPECTED_PLUGINS)}")
+    if set(by_name) != CLAUDE_MARKETPLACE_PLUGINS:
+        errors.append(f"{rel(path)} plugins must be {sorted(CLAUDE_MARKETPLACE_PLUGINS)}")
         return
 
-    for plugin_name, expected in EXPECTED_PLUGINS.items():
+    for plugin_name in CLAUDE_MARKETPLACE_PLUGINS:
+        expected = EXPECTED_PLUGINS[plugin_name]
         entry = by_name[plugin_name]
         if entry.get("source") != f"./plugins/{plugin_name}":
             errors.append(f"{rel(path)} entry {plugin_name} source must be ./plugins/{plugin_name}")
         if entry.get("description") != expected["description"]:
             errors.append(f"{rel(path)} entry {plugin_name} description drifted")
+        if entry.get("author") != EXPECTED_AUTHOR:
+            errors.append(f"{rel(path)} entry {plugin_name} author drifted")
+        if entry.get("category") != "education":
+            errors.append(f"{rel(path)} entry {plugin_name} category must be education")
+        if entry.get("homepage") != EXPECTED_AUTHOR["url"]:
+            errors.append(f"{rel(path)} entry {plugin_name} homepage drifted")
         plugin_manifest(plugin_name, "claude", errors)
 
 

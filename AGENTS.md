@@ -12,6 +12,8 @@ This repository is a Codex CLI and Claude Code plugin marketplace.
 
 Each plugin must remain self-contained. Do not add plugin instructions that depend on files outside that plugin folder unless the same file is also bundled inside the plugin.
 
+Root files describe marketplace behavior. Plugin-specific instructions belong in each plugin directory. Rubric Maker has its own instructions at `plugins/rubric-maker-skill/AGENTS.md`; follow those when editing Rubric Maker skills, schemas, or plugin-local scripts.
+
 ## Marketplace Requirements
 
 Every installable plugin entry in `.agents/plugins/marketplace.json` must:
@@ -22,8 +24,24 @@ Every installable plugin entry in `.agents/plugins/marketplace.json` must:
 - Have a matching plugin directory with `.codex-plugin/plugin.json`.
 
 Every plugin entry in `.claude-plugin/marketplace.json` must point to the same plugin directory and have a matching `.claude-plugin/plugin.json`.
+Claude marketplace entries should include `description`, `author`, `category`, and `homepage` so the root marketplace remains useful as a catalog, not only as a loader.
+Because Claude Code marketplace entries are installable entries and do not have a Codex-style `NOT_AVAILABLE` policy, do not list placeholder-only plugins in `.claude-plugin/marketplace.json`.
 
 Placeholder plugins must stay marked as unavailable in the Codex marketplace until they contain real plugin surfaces.
+
+When adding a new plugin:
+
+- Create `plugins/<plugin-name>/`.
+- Add `.codex-plugin/plugin.json` and `.claude-plugin/plugin.json`.
+- Add `README.md` and `requirements.txt`, even if the requirements file only documents that there are no Python dependencies yet.
+- Add a Codex marketplace entry. Use `NOT_AVAILABLE` until the plugin has real skills, commands, agents, hooks, MCP configuration, scripts, or other runtime surfaces.
+- Add a Claude marketplace entry only when the plugin is genuinely installable.
+
+## Dependency Policy
+
+Each plugin owns its runtime requirements in `plugins/<plugin-name>/requirements.txt`.
+
+The root `requirements.txt` is only a compatibility shim for current root-level workflows. Do not add future plugin-specific packages only to the root requirements file.
 
 ## Rubric Maker Compatibility Requirements
 
@@ -43,6 +61,8 @@ python3 scripts/smoke_test.py
 ```
 
 Treat any failing check as a blocking issue.
+
+The root scripts in `scripts/` are compatibility wrappers or marketplace validators. Preserve these root entry points unless there is a deliberate migration plan, because existing documentation and users may run validation from the marketplace root.
 
 If the Rubric Maker canonical schema changes, update every Rubric Maker skill-local schema copy:
 
@@ -79,6 +99,7 @@ python3 scripts/verify_grade_sheet_schema_sync.py
 
 - Do not commit generated `*.zip` skill packages.
 - Do not commit `.DS_Store`, caches, local virtual environments, logs, or generated output directories.
+- Do not commit `.copilot-tracking/`; it is local HVE workflow state and is ignored.
 - Keep root marketplace metadata aligned with per-plugin manifests.
 - Keep plugin `name` manifest fields aligned with plugin directory names.
 - Keep skill `name` frontmatter equal to its directory name.

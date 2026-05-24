@@ -117,6 +117,8 @@ Use $grading-dry-run to grade this sample note, transcript, or transcript-plus-o
 Use $evaluate-dry-run to turn this trial grade sheet into rubric improvement suggestions.
 ```
 
+Unless a command explicitly starts with `plugins/rubric-maker-skill/`, run the examples below from this plugin directory.
+
 ## Document And Output Scripts
 
 `rubric-import` includes two helper scripts.
@@ -217,7 +219,7 @@ python3 /path/to/skill-creator/scripts/quick_validate.py \
   skills/post-encounter-note-rubric
 ```
 
-Validate every skill in this repo:
+Validate every skill in this plugin:
 
 ```bash
 for d in skills/*/; do
