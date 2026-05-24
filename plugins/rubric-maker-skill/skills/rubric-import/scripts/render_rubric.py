@@ -10,7 +10,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 FIELDS = [
     "Category",
     "QuestionName",
@@ -103,10 +102,12 @@ def render_xlsx(rubric: list[dict[str, Any]], output: Path) -> None:
         cell.border = border
 
     for row_index, item in enumerate(rubric, start=2):
-        row_values = [row_index - 2]
+        row_values: list[Any] = [row_index - 2]
         row_values.extend(value(item, key) for key in FIELDS)
         scoring = item.get("ScoringLogic") or {}
-        row_values.extend(str(scoring.get(key, "")) if isinstance(scoring, dict) else "" for key in scores)
+        row_values.extend(
+            str(scoring.get(key, "")) if isinstance(scoring, dict) else "" for key in scores
+        )
         for col_index, cell_value in enumerate(row_values, start=1):
             cell = sheet.cell(row=row_index, column=col_index, value=cell_value)
             cell.alignment = body_alignment

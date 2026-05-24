@@ -8,17 +8,12 @@ import sys
 import tempfile
 from pathlib import Path
 
-
 REPO_ROOT = Path(__file__).resolve().parent.parent
-RUBRIC_IMPORT_SMOKE = (
-    REPO_ROOT / "skills" / "rubric-import" / "scripts" / "smoke_test.py"
-)
+RUBRIC_IMPORT_SMOKE = REPO_ROOT / "skills" / "rubric-import" / "scripts" / "smoke_test.py"
 STUDENT_ARTIFACT_VALIDATOR = (
     REPO_ROOT / "skills" / "generate-student-artifact" / "scripts" / "validate_student_artifact.py"
 )
-GRADING_DRY_RUN_SMOKE = (
-    REPO_ROOT / "skills" / "grading-dry-run" / "scripts" / "smoke_test.py"
-)
+GRADING_DRY_RUN_SMOKE = REPO_ROOT / "skills" / "grading-dry-run" / "scripts" / "smoke_test.py"
 DRY_RUN_SUGGESTION_VALIDATOR = (
     REPO_ROOT / "skills" / "evaluate-dry-run" / "scripts" / "validate_dry_run_suggestions.py"
 )
@@ -39,7 +34,9 @@ def run_command(args: list[str]) -> None:
         output = "\n".join(
             part for part in [completed.stdout.strip(), completed.stderr.strip()] if part
         )
-        raise RuntimeError(f"{' '.join(args)} failed with exit code {completed.returncode}\n{output}")
+        raise RuntimeError(
+            f"{' '.join(args)} failed with exit code {completed.returncode}\n{output}"
+        )
 
 
 def run_expected_failure(args: list[str], expected_snippets: list[str]) -> None:
@@ -58,9 +55,7 @@ def run_expected_failure(args: list[str], expected_snippets: list[str]) -> None:
 
     missing = [snippet for snippet in expected_snippets if snippet not in output]
     if missing:
-        raise RuntimeError(
-            f"{' '.join(args)} failed without expected output {missing}\n{output}"
-        )
+        raise RuntimeError(f"{' '.join(args)} failed without expected output {missing}\n{output}")
 
 
 def main() -> int:
@@ -70,9 +65,7 @@ def main() -> int:
     run_command([sys.executable, str(REPO_ROOT / "scripts" / "verify_schema_sync.py")])
     print("PASS schema sync")
 
-    run_command(
-        [sys.executable, str(REPO_ROOT / "scripts" / "verify_grade_sheet_schema_sync.py")]
-    )
+    run_command([sys.executable, str(REPO_ROOT / "scripts" / "verify_grade_sheet_schema_sync.py")])
     print("PASS grade-sheet schema sync")
 
     run_command([sys.executable, str(RUBRIC_IMPORT_SMOKE)])
@@ -153,9 +146,7 @@ def main() -> int:
 """,
             encoding="utf-8",
         )
-        run_command(
-            [sys.executable, str(EVALUATE_DRY_RUN_GRADE_SHEET_VALIDATOR), str(grade_sheet)]
-        )
+        run_command([sys.executable, str(EVALUATE_DRY_RUN_GRADE_SHEET_VALIDATOR), str(grade_sheet)])
         print("PASS evaluate-dry-run grade-sheet validation smoke")
 
         dry_run_suggestions = tmpdir / "dry_run_suggestions.json"

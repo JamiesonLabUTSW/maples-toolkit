@@ -8,7 +8,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PLUGINS_DIR = REPO_ROOT / "plugins"
 RUBRIC_PLUGIN_ROOT = PLUGINS_DIR / "rubric-maker-skill"
@@ -95,7 +94,9 @@ def validate_codex_marketplace(errors: list[str]) -> None:
                     f"{expected['codex_installation']}"
                 )
             if policy.get("authentication") != "ON_INSTALL":
-                errors.append(f"{rel(path)} entry {plugin_name} policy.authentication must be ON_INSTALL")
+                errors.append(
+                    f"{rel(path)} entry {plugin_name} policy.authentication must be ON_INSTALL"
+                )
         if entry.get("category") != "Education":
             errors.append(f"{rel(path)} entry {plugin_name} category must be Education")
         if not (PLUGINS_DIR / plugin_name).is_dir():
@@ -113,7 +114,10 @@ def validate_claude_marketplace(errors: list[str]) -> None:
         errors.append(f"{rel(path)} name must be ut-real-project-maples")
     if payload.get("$schema") != "https://anthropic.com/claude-code/marketplace.schema.json":
         errors.append(f"{rel(path)} $schema must be the Claude Code marketplace schema URL")
-    if payload.get("description") != "Codex CLI and Claude Code plugins from the UT REAL Project MAPLES research group.":
+    if (
+        payload.get("description")
+        != "Codex CLI and Claude Code plugins from the UT REAL Project MAPLES research group."
+    ):
         errors.append(f"{rel(path)} description drifted")
     if payload.get("version") != "0.1.0":
         errors.append(f"{rel(path)} version must be 0.1.0")
@@ -154,7 +158,9 @@ def validate_manifest_alignment(errors: list[str]) -> None:
             if codex.get(key) != claude.get(key):
                 errors.append(f"plugin {plugin_name} Codex and Claude manifests disagree on {key}")
         if codex.get("author", {}).get("name") != claude.get("author", {}).get("name"):
-            errors.append(f"plugin {plugin_name} Codex and Claude manifests disagree on author.name")
+            errors.append(
+                f"plugin {plugin_name} Codex and Claude manifests disagree on author.name"
+            )
 
 
 def run_rubric_plugin_check() -> int:

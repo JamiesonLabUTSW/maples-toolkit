@@ -9,8 +9,7 @@ import math
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
-
+from typing import Any, TypeGuard, cast
 
 VALID_ARTIFACT_TYPES = {"note", "observation_log", "transcript", "transcript_plus_observations"}
 VALID_CONFIDENCE = {"high", "medium", "low"}
@@ -48,11 +47,11 @@ def load_data(path: Path) -> Any:
     return json.loads(text)
 
 
-def is_number(value: Any) -> bool:
+def is_number(value: Any) -> TypeGuard[int | float]:
     return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
 
 
-def is_nonempty_string(value: Any) -> bool:
+def is_nonempty_string(value: Any) -> TypeGuard[str]:
     return isinstance(value, str) and bool(value.strip())
 
 
@@ -67,7 +66,9 @@ def unwrap_grade_sheet(data: Any) -> tuple[dict[str, Any] | None, list[Validatio
         extra_keys = set(data) - {"grade_sheet"}
         issues = []
         if extra_keys:
-            issues.append(ValidationIssue("$", f"unexpected top-level fields: {sorted(extra_keys)}"))
+            issues.append(
+                ValidationIssue("$", f"unexpected top-level fields: {sorted(extra_keys)}")
+            )
         grade_sheet = data.get("grade_sheet")
         if not isinstance(grade_sheet, dict):
             issues.append(ValidationIssue("$.grade_sheet", "must be an object"))
@@ -90,6 +91,7 @@ def validate_evidence(evidence: Any, path: str) -> list[ValidationIssue]:
         if not isinstance(entry, dict):
             issues.append(ValidationIssue(entry_path, "must be a string or object"))
             continue
+        entry = cast("dict[str, Any]", entry)
         if not is_nonempty_string(entry.get("text")):
             issues.append(ValidationIssue(f"{entry_path}.text", "must be a nonempty string"))
         if "timestamp" in entry and not is_nonempty_string(entry.get("timestamp")):
@@ -105,6 +107,7 @@ def has_observation_evidence(evidence: Any) -> bool:
     for entry in evidence:
         if not isinstance(entry, dict):
             continue
+        entry = cast("dict[str, Any]", entry)
         source = entry.get("source")
         if source in VALID_OBSERVATION_SOURCES and is_nonempty_string(entry.get("text")):
             return True
@@ -129,7 +132,9 @@ def validate_video_evidence(evidence: Any, path: str) -> list[ValidationIssue]:
     return []
 
 
-def validate_evidence_sources(grade_sheet: dict[str, Any], artifact_type: Any) -> list[ValidationIssue]:
+def validate_evidence_sources(
+    grade_sheet: dict[str, Any], artifact_type: Any
+) -> list[ValidationIssue]:
     issues: list[ValidationIssue] = []
     evidence_sources = grade_sheet.get("evidence_sources")
     if evidence_sources is None:
@@ -171,7 +176,11 @@ def validate_evidence_sources(grade_sheet: dict[str, Any], artifact_type: Any) -
                     f"must include {missing_sources} for transcript_plus_observations",
                 )
             )
-    elif artifact_type in VALID_EVIDENCE_SOURCES and normalized_sources and artifact_type not in normalized_sources:
+    elif (
+        artifact_type in VALID_EVIDENCE_SOURCES
+        and normalized_sources
+        and artifact_type not in normalized_sources
+    ):
         issues.append(
             ValidationIssue(
                 "$.evidence_sources",
@@ -236,7 +245,9 @@ def validate_item(
 
     for field in ("item_id", "category", "question_name"):
         if not is_nonempty_string(item.get(field)):
-            issues.append(ValidationIssue(f"{path}.{field}", "is required and must be a nonempty string"))
+            issues.append(
+                ValidationIssue(f"{path}.{field}", "is required and must be a nonempty string")
+            )
 
     if "max_score" not in item:
         issues.append(ValidationIssue(f"{path}.max_score", "is required"))
@@ -262,7 +273,9 @@ def validate_item(
                 )
             )
         if "score" in item and item.get("score") is not None:
-            issues.append(ValidationIssue(f"{path}.score", "must be omitted or null for unscorable items"))
+            issues.append(
+                ValidationIssue(f"{path}.score", "must be omitted or null for unscorable items")
+            )
         unscorable_max_score = float(max_score) if is_number(max_score) else None
         return issues, None, unscorable_max_score
 
@@ -274,7 +287,9 @@ def validate_item(
         if not is_number(score) or score < 0:
             issues.append(ValidationIssue(f"{path}.score", "must be a non-negative number"))
         elif is_number(max_score) and score > max_score:
-            issues.append(ValidationIssue(f"{path}.score", "must be less than or equal to max_score"))
+            issues.append(
+                ValidationIssue(f"{path}.score", "must be less than or equal to max_score")
+            )
 
     if "evidence" not in item:
         issues.append(ValidationIssue(f"{path}.evidence", "is required for scored items"))
@@ -297,12 +312,16 @@ def validate_item(
 
     if not is_number(score) or not is_number(max_score):
         return issues, None, None
-    return issues, {
-        "category": item.get("category"),
-        "section": item.get("section"),
-        "score": float(score),
-        "max_score": float(max_score),
-    }, None
+    return (
+        issues,
+        {
+            "category": item.get("category"),
+            "section": item.get("section"),
+            "score": float(score),
+            "max_score": float(max_score),
+        },
+        None,
+    )
 
 
 def validate_subtotals(
@@ -332,7 +351,10 @@ def validate_subtotals(
         if not isinstance(subtotal, dict):
             issues.append(ValidationIssue(path, "must be an object"))
             continue
-        label_type = "category" if "category" in subtotal else "section" if "section" in subtotal else None
+        subtotal = cast("dict[str, Any]", subtotal)
+        label_type = (
+            "category" if "category" in subtotal else "section" if "section" in subtotal else None
+        )
         if label_type is None:
             issues.append(ValidationIssue(path, "must include category or section"))
             continue
@@ -340,7 +362,9 @@ def validate_subtotals(
         if not is_nonempty_string(label):
             issues.append(ValidationIssue(f"{path}.{label_type}", "must be a nonempty string"))
             continue
-        expected = category_totals.get(label) if label_type == "category" else section_totals.get(label)
+        expected = (
+            category_totals.get(label) if label_type == "category" else section_totals.get(label)
+        )
         if expected is None:
             issues.append(ValidationIssue(path, f"does not match any scored item {label_type}"))
             continue
@@ -372,21 +396,31 @@ def validate_totals(
         if not is_number(total_score):
             issues.append(ValidationIssue("$.total_score", "must be a number"))
         elif not numbers_equal(float(total_score), expected_total):
-            issues.append(ValidationIssue("$.total_score", f"must equal summed item scores {expected_total:g}"))
+            issues.append(
+                ValidationIssue(
+                    "$.total_score", f"must equal summed item scores {expected_total:g}"
+                )
+            )
 
     if "max_score" in grade_sheet:
         max_score = grade_sheet.get("max_score")
         if not is_number(max_score):
             issues.append(ValidationIssue("$.max_score", "must be a number"))
         elif not numbers_equal(float(max_score), expected_max):
-            issues.append(ValidationIssue("$.max_score", f"must equal summed item max scores {expected_max:g}"))
+            issues.append(
+                ValidationIssue(
+                    "$.max_score", f"must equal summed item max scores {expected_max:g}"
+                )
+            )
 
     if "percentage" in grade_sheet and grade_sheet.get("percentage") is not None:
         percentage = grade_sheet.get("percentage")
         if not is_number(percentage):
             issues.append(ValidationIssue("$.percentage", "must be a number or null"))
         elif expected_max == 0:
-            issues.append(ValidationIssue("$.percentage", "must be null or omitted when max_score is 0"))
+            issues.append(
+                ValidationIssue("$.percentage", "must be null or omitted when max_score is 0")
+            )
         else:
             expected_percentage = expected_total / expected_max * 100
             if not numbers_equal(float(percentage), expected_percentage):
@@ -398,7 +432,11 @@ def validate_totals(
                 )
     if "unscorable_count" in grade_sheet:
         unscorable_count = grade_sheet.get("unscorable_count")
-        if not isinstance(unscorable_count, int) or isinstance(unscorable_count, bool) or unscorable_count < 0:
+        if (
+            not isinstance(unscorable_count, int)
+            or isinstance(unscorable_count, bool)
+            or unscorable_count < 0
+        ):
             issues.append(ValidationIssue("$.unscorable_count", "must be a non-negative integer"))
         elif unscorable_count != len(unscorable_max_scores):
             issues.append(
@@ -461,9 +499,7 @@ def validate_grade_sheet(data: Any) -> list[ValidationIssue]:
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Validate grading-dry-run grade-sheet YAML/JSON."
-    )
+    parser = argparse.ArgumentParser(description="Validate grading-dry-run grade-sheet YAML/JSON.")
     parser.add_argument("inputs", nargs="+", help="Grade-sheet JSON or YAML files to validate")
     parser.add_argument(
         "--json",

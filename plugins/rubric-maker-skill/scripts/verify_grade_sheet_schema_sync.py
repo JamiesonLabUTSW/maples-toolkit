@@ -7,7 +7,6 @@ import argparse
 import sys
 from pathlib import Path
 
-
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_CANONICAL_CONTRACT = REPO_ROOT / "references" / "grade-sheet-contract.md"
 DEFAULT_CANONICAL_VALIDATOR = (

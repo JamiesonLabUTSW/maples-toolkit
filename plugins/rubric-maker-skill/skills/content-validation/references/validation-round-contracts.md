@@ -12,24 +12,25 @@
 - [Synthesis Contract](#synthesis-contract)
 - [Error And Fallback Behavior](#error-and-fallback-behavior)
 
-This reference captures the JSON contracts and round structure for content
-validation. Use it when simulating a multi-perspective validation workflow or
-when formatting outputs for handoff.
+This reference captures the JSON contracts and round structure for content validation.
+Use it when simulating a multi-perspective validation workflow or when formatting
+outputs for handoff.
 
 ## Workflow Boundary
 
-The skill can simulate multiple expert perspectives, filter rubric YAML by
-issue scope, and synthesize a final recommendation. It should simulate the
-reasoning and JSON contracts only.
+The skill can simulate multiple expert perspectives, filter rubric YAML by issue scope,
+and synthesize a final recommendation.
+It should simulate the reasoning and JSON contracts only.
 
-Load `workflow-guide.md` for process, boundaries, clarification, educator
-guidance, and upstream-to-CLI interpretation. Use this file for output schemas.
+Load `workflow-guide.md` for process, boundaries, clarification, educator guidance, and
+upstream-to-CLI interpretation.
+Use this file for output schemas.
 
 ## Contract Selection
 
-Use the synthesis contract as the default complete answer for content
-validation. It contains the verdict, fix, agreement breakdown, alternatives,
-caveats, and reasoning needed for educator handoff.
+Use the synthesis contract as the default complete answer for content validation.
+It contains the verdict, fix, agreement breakdown, alternatives, caveats, and reasoning
+needed for educator handoff.
 
 Use round-specific contracts only when:
 
@@ -38,8 +39,8 @@ Use round-specific contracts only when:
 - the user provides multiple prior model responses to critique,
 - or a validation meeting is being reconstructed step by step.
 
-When the user asks for a concise answer, preserve the same fields and semantics
-even if the response is rendered as prose.
+When the user asks for a concise answer, preserve the same fields and semantics even if
+the response is rendered as prose.
 
 ## Scope Inputs
 
@@ -49,17 +50,17 @@ Each validation issue may be scoped to:
 - a category,
 - a specific question ID.
 
-Use the user's clarified issue when available. If clarification is not
-available, use the raw user concern.
+Use the user's clarified issue when available.
+If clarification is not available, use the raw user concern.
 
-Include only the relevant rubric section when possible and state the scope
-explicitly.
+Include only the relevant rubric section when possible and state the scope explicitly.
 
 ## Clarification Preflight Contract
 
-Purpose: convert raw educator feedback into an actionable validation issue
-before analysis. Use this when the user's concern is ambiguous, broad, or not
-yet tied to rubric evidence.
+Purpose: convert raw educator feedback into an actionable validation issue before
+analysis.
+Use this when the user's concern is ambiguous, broad, or not yet tied to rubric
+evidence.
 
 Output must be valid JSON:
 
@@ -81,15 +82,14 @@ Allowed `scope` values:
 - `category`
 - `specific_question`
 
-Set `needs_user_confirmation` to `true` and populate
-`clarifying_question` only when missing information could reverse the
-recommendation or when the target row/category cannot be identified
-responsibly.
+Set `needs_user_confirmation` to `true` and populate `clarifying_question` only when
+missing information could reverse the recommendation or when the target row/category
+cannot be identified responsibly.
 
 ## Round 1: Initial Analysis
 
-Purpose: each model independently validates whether the user's concern is a
-legitimate rubric issue and proposes a specific fix if needed.
+Purpose: each model independently validates whether the user's concern is a legitimate
+rubric issue and proposes a specific fix if needed.
 
 Output must be valid JSON:
 
@@ -120,7 +120,8 @@ Requirements:
 - Include complete scoring logic if modifying scores.
 - Consider real OSCE practicality.
 - Maintain the existing rubric structure and format.
-- Recommend changes; do not apply patches unless the user explicitly asks for implementation.
+- Recommend changes; do not apply patches unless the user explicitly asks for
+  implementation.
 
 Severity scale:
 
@@ -132,14 +133,14 @@ Severity scale:
 
 ## Round 2: Critique Others
 
-Purpose: each model reviews its own Round 1 answer against the other models'
-answers, identifies agreements and disagreements, and refines its perspective.
+Purpose: each model reviews its own Round 1 answer against the other models' answers,
+identifies agreements and disagreements, and refines its perspective.
 
 Use at least two previous responses before critique.
 
 If fewer than two Round 1 responses are available, do not present critique as a
-multi-perspective consensus. Either produce additional independent perspectives
-or state the evidence limitation.
+multi-perspective consensus.
+Either produce additional independent perspectives or state the evidence limitation.
 
 Output must be valid JSON:
 
@@ -188,8 +189,7 @@ Guidelines:
 
 ## Round 3: Refined Recommendation
 
-Purpose: each model gives its final recommendation after reviewing the full
-discussion.
+Purpose: each model gives its final recommendation after reviewing the full discussion.
 
 Use Round 3 only after Round 1 analysis and Round 2 critique are available.
 Include educator guidance when the user provides it before final refinement.
@@ -315,9 +315,9 @@ Confidence levels:
 
 ## Error And Fallback Behavior
 
-Consumers may parse JSON from direct text or fenced JSON. Avoid fallback parsing
-by returning clean JSON for each round when a JSON contract is requested.
+Consumers may parse JSON from direct text or fenced JSON. Avoid fallback parsing by
+returning clean JSON for each round when a JSON contract is requested.
 
 If the issue is not valid, still populate the verdict fields and explain why.
-Use `suggested_fix` or `final_fix` to state that no rubric change is recommended
-when the contract requires the object.
+Use `suggested_fix` or `final_fix` to state that no rubric change is recommended when
+the contract requires the object.

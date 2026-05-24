@@ -8,7 +8,6 @@ import re
 import sys
 from pathlib import Path
 
-
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
 CANONICAL_SCHEMA = REPO_ROOT / "references" / "rubric-schema.md"
@@ -115,13 +114,17 @@ def validate_manifest(
 def validate_manifest_alignment(codex: dict, claude: dict, errors: list[str]) -> None:
     for key in ("name", "version", "homepage", "license"):
         if codex.get(key) != claude.get(key):
-            errors.append(f".codex-plugin/plugin.json and .claude-plugin/plugin.json disagree on {key}")
+            errors.append(
+                f".codex-plugin/plugin.json and .claude-plugin/plugin.json disagree on {key}"
+            )
 
     codex_author = codex.get("author", {})
     claude_author = claude.get("author", {})
     if isinstance(codex_author, dict) and isinstance(claude_author, dict):
         if codex_author.get("name") != claude_author.get("name"):
-            errors.append(".codex-plugin/plugin.json and .claude-plugin/plugin.json disagree on author.name")
+            errors.append(
+                ".codex-plugin/plugin.json and .claude-plugin/plugin.json disagree on author.name"
+            )
 
 
 def validate_skills(errors: list[str]) -> None:
@@ -212,9 +215,7 @@ def validate_packaging_hygiene(errors: list[str]) -> None:
         errors.append(f"OS metadata file must not be committed or packaged: {rel(path)}")
 
     zip_files = [
-        path
-        for path in REPO_ROOT.rglob("*.zip")
-        if ".git" not in path.relative_to(REPO_ROOT).parts
+        path for path in REPO_ROOT.rglob("*.zip") if ".git" not in path.relative_to(REPO_ROOT).parts
     ]
     for path in zip_files:
         errors.append(f"generated archive must not be committed or packaged: {rel(path)}")
@@ -253,7 +254,9 @@ def validate_no_upstream_references(errors: list[str]) -> None:
         lowered_name = relative.lower()
         for pattern in FORBIDDEN_UPSTREAM_PATTERNS:
             if pattern in lowered_name:
-                errors.append(f"{relative} must not use unpublished upstream reference marker {pattern!r}")
+                errors.append(
+                    f"{relative} must not use unpublished upstream reference marker {pattern!r}"
+                )
 
         try:
             text = path.read_text(encoding="utf-8")
@@ -262,7 +265,9 @@ def validate_no_upstream_references(errors: list[str]) -> None:
         lowered_text = text.lower()
         for pattern in FORBIDDEN_UPSTREAM_PATTERNS:
             if pattern in lowered_text:
-                errors.append(f"{relative} must not mention unpublished upstream reference marker {pattern!r}")
+                errors.append(
+                    f"{relative} must not mention unpublished upstream reference marker {pattern!r}"
+                )
 
 
 def main() -> int:
@@ -285,7 +290,9 @@ def main() -> int:
             print(f"ERROR {error}", file=sys.stderr)
         return 1
 
-    print("PASS plugin compatibility: Agent Skills, Codex plugin, and Claude Code plugin invariants hold")
+    print(
+        "PASS plugin compatibility: Agent Skills, Codex plugin, and Claude Code plugin invariants hold"
+    )
     return 0
 
 

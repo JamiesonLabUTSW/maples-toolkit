@@ -11,7 +11,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-
 REQUIRED_FIELDS = {
     "location",
     "reasoning",
@@ -128,7 +127,9 @@ def validate_location(item: dict[str, Any], index: int) -> list[ValidationIssue]
                 )
             )
     elif sub is not None:
-        issues.append(ValidationIssue(f"{path}.sub", "must be omitted or null unless location has .ScoreN"))
+        issues.append(
+            ValidationIssue(f"{path}.sub", "must be omitted or null unless location has .ScoreN")
+        )
 
     if location_sub and location_field != "ScoringLogic":
         issues.append(

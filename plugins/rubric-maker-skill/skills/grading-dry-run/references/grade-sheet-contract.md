@@ -25,19 +25,24 @@ items: []
 
 ## Required Fields
 
-- `artifact_type`: one of `note`, `transcript`, `observation_log`, or `transcript_plus_observations`.
+- `artifact_type`: one of `note`, `transcript`, `observation_log`, or
+  `transcript_plus_observations`.
 - `items`: nonempty array with one row per rubric item.
 
 Optional full-grade fields:
 
-- `evidence_sources`: one or more of `note`, `transcript`, or `observation_log`. Required when `artifact_type` is `transcript_plus_observations`.
+- `evidence_sources`: one or more of `note`, `transcript`, or `observation_log`.
+  Required when `artifact_type` is `transcript_plus_observations`.
 - `subtotals`: category or section subtotal rows.
 - `total_score`: sum of scored item scores.
 - `max_score`: sum of max scores for scored items.
-- `percentage`: provisional scored-evidence percentage, calculated as `total_score / max_score * 100`, rounded reasonably. Unscorable rows are omitted from this denominator.
+- `percentage`: provisional scored-evidence percentage, calculated as
+  `total_score / max_score * 100`, rounded reasonably.
+  Unscorable rows are omitted from this denominator.
 - `unscorable_count`: count of rows marked unscorable.
 - `unscorable_max_score`: sum of max scores from unscorable rows.
-- `grading_friction_notes`: short notes about ambiguous, unsupported, or hard-to-score rubric behavior.
+- `grading_friction_notes`: short notes about ambiguous, unsupported, or hard-to-score
+  rubric behavior.
 
 ## Item Row Fields
 
@@ -71,24 +76,33 @@ Optional row fields:
 When present, `mode` should be one of `note`, `audio`, or `video`.
 
 - `note` rows may be scored only when `artifact_type` is `note`.
-- `audio` rows may be scored from `artifact_type: transcript` or `artifact_type: transcript_plus_observations`.
-- `video` rows may be scored from `artifact_type: observation_log` or `artifact_type: transcript_plus_observations`.
-- `transcript_plus_observations` must include both `transcript` and `observation_log` in `evidence_sources`.
-- Any unsupported `mode`, or any supported mode paired with an incompatible `artifact_type`, must be marked `unscorable: true` instead of scored.
+- `audio` rows may be scored from `artifact_type: transcript` or
+  `artifact_type: transcript_plus_observations`.
+- `video` rows may be scored from `artifact_type: observation_log` or
+  `artifact_type: transcript_plus_observations`.
+- `transcript_plus_observations` must include both `transcript` and `observation_log` in
+  `evidence_sources`.
+- Any unsupported `mode`, or any supported mode paired with an incompatible
+  `artifact_type`, must be marked `unscorable: true` instead of scored.
 
-Raw audio and raw video are never inspected by this skill. A transcript, note, observation log, or transcript-plus-observation bundle must already exist as text evidence.
+Raw audio and raw video are never inspected by this skill.
+A transcript, note, observation log, or transcript-plus-observation bundle must already
+exist as text evidence.
 
 ## Evidence Shape
 
-For note and audio rows, `evidence` may be a nonempty string or a nonempty array of evidence objects.
+For note and audio rows, `evidence` may be a nonempty string or a nonempty array of
+evidence objects.
 
-For video rows, `evidence` must be a nonempty array of evidence objects with at least one object whose `source` is `observation_log` or `observation`.
+For video rows, `evidence` must be a nonempty array of evidence objects with at least
+one object whose `source` is `observation_log` or `observation`.
 
 Evidence object fields:
 
 - `text`: exact note/transcript text or supplied observation text.
 - `timestamp`: timestamp or range for observation-log evidence.
-- `source`: label such as `note`, `transcript`, or `observation_log`. Required for video evidence objects and optional otherwise.
+- `source`: label such as `note`, `transcript`, or `observation_log`. Required for video
+  evidence objects and optional otherwise.
 
 ## Subtotals
 
@@ -101,4 +115,8 @@ subtotals:
     max_score: 8
 ```
 
-Use `section` instead of `category` only when the rubric groups rows by section. Subtotals must equal the sum of scored rows in that category or section. Unscorable rows are omitted from subtotal and total math because no provisional score was assigned. Use `unscorable_count` and `unscorable_max_score` to preserve denominator-loss visibility.
+Use `section` instead of `category` only when the rubric groups rows by section.
+Subtotals must equal the sum of scored rows in that category or section.
+Unscorable rows are omitted from subtotal and total math because no provisional score
+was assigned. Use `unscorable_count` and `unscorable_max_score` to preserve
+denominator-loss visibility.

@@ -2,9 +2,11 @@
 
 ## Case Transformation
 
-- Identify what changes because of the new case: patient age, setting, complaint, acuity, available equipment, role, and expected competencies.
+- Identify what changes because of the new case: patient age, setting, complaint,
+  acuity, available equipment, role, and expected competencies.
 - Preserve source rubric structure when possible.
-- Change content only when needed for alignment, safety, modality, or clinical correctness.
+- Change content only when needed for alignment, safety, modality, or clinical
+  correctness.
 
 ## Missing Fields
 
@@ -13,7 +15,8 @@
 
 ## Score Expansion
 
-- Add score levels only when adjacent performance bands can be meaningfully distinguished.
+- Add score levels only when adjacent performance bands can be meaningfully
+  distinguished.
 - Keep `Score1` as lowest performance and higher scores as better performance.
 - Avoid adding levels that repeat the same behavior with vague adverbs.
 
@@ -25,5 +28,7 @@
 
 ## Template Application
 
-- Apply naming, phrasing, score-anchor style, and field-density patterns from the reference rubric.
-- Preserve the target rubric's clinical content unless the user requests clinical changes.
+- Apply naming, phrasing, score-anchor style, and field-density patterns from the
+  reference rubric.
+- Preserve the target rubric's clinical content unless the user requests clinical
+  changes.
