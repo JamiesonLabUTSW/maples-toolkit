@@ -12,13 +12,15 @@ from pathlib import Path
 from typing import Any
 
 
-VALID_ARTIFACT_TYPES = {"note", "transcript", "observation_log"}
+VALID_ARTIFACT_TYPES = {"note", "observation_log", "transcript", "transcript_plus_observations"}
 VALID_CONFIDENCE = {"high", "medium", "low"}
+VALID_EVIDENCE_SOURCES = {"note", "observation_log", "transcript"}
+VALID_OBSERVATION_SOURCES = {"observation", "observation_log"}
 VALID_ITEM_MODES = {"audio", "note", "video"}
 SUPPORTED_ARTIFACTS_BY_MODE = {
-    "audio": {"transcript"},
+    "audio": {"transcript", "transcript_plus_observations"},
     "note": {"note"},
-    "video": {"observation_log", "transcript"},
+    "video": {"observation_log", "transcript_plus_observations"},
 }
 TOTAL_TOLERANCE = 0.01
 
@@ -97,6 +99,89 @@ def validate_evidence(evidence: Any, path: str) -> list[ValidationIssue]:
     return issues
 
 
+def has_observation_evidence(evidence: Any) -> bool:
+    if not isinstance(evidence, list):
+        return False
+    for entry in evidence:
+        if not isinstance(entry, dict):
+            continue
+        source = entry.get("source")
+        if source in VALID_OBSERVATION_SOURCES and is_nonempty_string(entry.get("text")):
+            return True
+    return False
+
+
+def validate_video_evidence(evidence: Any, path: str) -> list[ValidationIssue]:
+    if not isinstance(evidence, list) or not evidence:
+        return [
+            ValidationIssue(
+                f"{path}.evidence",
+                "video-mode scored rows must use structured observation evidence",
+            )
+        ]
+    if not has_observation_evidence(evidence):
+        return [
+            ValidationIssue(
+                f"{path}.evidence",
+                "video-mode scored rows require evidence with source 'observation_log' or 'observation'",
+            )
+        ]
+    return []
+
+
+def validate_evidence_sources(grade_sheet: dict[str, Any], artifact_type: Any) -> list[ValidationIssue]:
+    issues: list[ValidationIssue] = []
+    evidence_sources = grade_sheet.get("evidence_sources")
+    if evidence_sources is None:
+        if artifact_type == "transcript_plus_observations":
+            issues.append(
+                ValidationIssue(
+                    "$.evidence_sources",
+                    "is required for transcript_plus_observations and must include transcript and observation_log",
+                )
+            )
+        return issues
+
+    if not isinstance(evidence_sources, list) or not evidence_sources:
+        return [ValidationIssue("$.evidence_sources", "must be a nonempty array when present")]
+
+    normalized_sources = set()
+    for index, source in enumerate(evidence_sources):
+        path = f"$.evidence_sources[{index}]"
+        if not is_nonempty_string(source):
+            issues.append(ValidationIssue(path, "must be a nonempty string"))
+            continue
+        if source not in VALID_EVIDENCE_SOURCES:
+            issues.append(
+                ValidationIssue(
+                    path,
+                    f"must be one of {sorted(VALID_EVIDENCE_SOURCES)}",
+                )
+            )
+            continue
+        normalized_sources.add(source)
+
+    if artifact_type == "transcript_plus_observations":
+        required_sources = {"observation_log", "transcript"}
+        missing_sources = sorted(required_sources - normalized_sources)
+        if missing_sources:
+            issues.append(
+                ValidationIssue(
+                    "$.evidence_sources",
+                    f"must include {missing_sources} for transcript_plus_observations",
+                )
+            )
+    elif artifact_type in VALID_EVIDENCE_SOURCES and normalized_sources and artifact_type not in normalized_sources:
+        issues.append(
+            ValidationIssue(
+                "$.evidence_sources",
+                f"must include artifact_type {artifact_type!r} when provided",
+            )
+        )
+
+    return issues
+
+
 def validate_item_mode(
     item: dict[str, Any],
     path: str,
@@ -143,11 +228,11 @@ def validate_item(
     item: Any,
     index: int,
     artifact_type: Any,
-) -> tuple[list[ValidationIssue], dict[str, Any] | None]:
+) -> tuple[list[ValidationIssue], dict[str, Any] | None, float | None]:
     path = f"$.items[{index}]"
     issues: list[ValidationIssue] = []
     if not isinstance(item, dict):
-        return [ValidationIssue(path, "must be an object")], None
+        return [ValidationIssue(path, "must be an object")], None, None
 
     for field in ("item_id", "category", "question_name"):
         if not is_nonempty_string(item.get(field)):
@@ -178,7 +263,8 @@ def validate_item(
             )
         if "score" in item and item.get("score") is not None:
             issues.append(ValidationIssue(f"{path}.score", "must be omitted or null for unscorable items"))
-        return issues, None
+        unscorable_max_score = float(max_score) if is_number(max_score) else None
+        return issues, None, unscorable_max_score
 
     if "score" not in item:
         issues.append(ValidationIssue(f"{path}.score", "is required for scored items"))
@@ -193,7 +279,10 @@ def validate_item(
     if "evidence" not in item:
         issues.append(ValidationIssue(f"{path}.evidence", "is required for scored items"))
     else:
-        issues.extend(validate_evidence(item.get("evidence"), f"{path}.evidence"))
+        evidence = item.get("evidence")
+        issues.extend(validate_evidence(evidence, f"{path}.evidence"))
+        if item.get("mode") == "video":
+            issues.extend(validate_video_evidence(evidence, path))
 
     if not is_nonempty_string(item.get("rationale")):
         issues.append(ValidationIssue(f"{path}.rationale", "is required for scored items"))
@@ -207,13 +296,13 @@ def validate_item(
         )
 
     if not is_number(score) or not is_number(max_score):
-        return issues, None
+        return issues, None, None
     return issues, {
         "category": item.get("category"),
         "section": item.get("section"),
         "score": float(score),
         "max_score": float(max_score),
-    }
+    }, None
 
 
 def validate_subtotals(
@@ -269,7 +358,11 @@ def validate_subtotals(
     return issues
 
 
-def validate_totals(grade_sheet: dict[str, Any], scored_items: list[dict[str, Any]]) -> list[ValidationIssue]:
+def validate_totals(
+    grade_sheet: dict[str, Any],
+    scored_items: list[dict[str, Any]],
+    unscorable_max_scores: list[float],
+) -> list[ValidationIssue]:
     issues: list[ValidationIssue] = []
     expected_total = sum(item["score"] for item in scored_items)
     expected_max = sum(item["max_score"] for item in scored_items)
@@ -303,6 +396,30 @@ def validate_totals(grade_sheet: dict[str, Any], scored_items: list[dict[str, An
                         f"must equal total_score / max_score * 100 ({expected_percentage:g})",
                     )
                 )
+    if "unscorable_count" in grade_sheet:
+        unscorable_count = grade_sheet.get("unscorable_count")
+        if not isinstance(unscorable_count, int) or isinstance(unscorable_count, bool) or unscorable_count < 0:
+            issues.append(ValidationIssue("$.unscorable_count", "must be a non-negative integer"))
+        elif unscorable_count != len(unscorable_max_scores):
+            issues.append(
+                ValidationIssue(
+                    "$.unscorable_count",
+                    f"must equal the number of unscorable rows {len(unscorable_max_scores)}",
+                )
+            )
+
+    if "unscorable_max_score" in grade_sheet:
+        unscorable_max_score = grade_sheet.get("unscorable_max_score")
+        expected_unscorable_max = sum(unscorable_max_scores)
+        if not is_number(unscorable_max_score):
+            issues.append(ValidationIssue("$.unscorable_max_score", "must be a number"))
+        elif not numbers_equal(float(unscorable_max_score), expected_unscorable_max):
+            issues.append(
+                ValidationIssue(
+                    "$.unscorable_max_score",
+                    f"must equal summed unscorable max scores {expected_unscorable_max:g}",
+                )
+            )
     return issues
 
 
@@ -319,6 +436,7 @@ def validate_grade_sheet(data: Any) -> list[ValidationIssue]:
                 f"must be one of {sorted(VALID_ARTIFACT_TYPES)}",
             )
         )
+    issues.extend(validate_evidence_sources(grade_sheet, artifact_type))
 
     items = grade_sheet.get("items")
     if not isinstance(items, list):
@@ -328,14 +446,17 @@ def validate_grade_sheet(data: Any) -> list[ValidationIssue]:
         issues.append(ValidationIssue("$.items", "must be a nonempty array"))
 
     scored_items: list[dict[str, Any]] = []
+    unscorable_max_scores: list[float] = []
     for index, item in enumerate(items):
-        item_issues, scored_item = validate_item(item, index, artifact_type)
+        item_issues, scored_item, unscorable_max_score = validate_item(item, index, artifact_type)
         issues.extend(item_issues)
         if scored_item is not None:
             scored_items.append(scored_item)
+        if unscorable_max_score is not None:
+            unscorable_max_scores.append(unscorable_max_score)
 
     issues.extend(validate_subtotals(grade_sheet.get("subtotals"), scored_items))
-    issues.extend(validate_totals(grade_sheet, scored_items))
+    issues.extend(validate_totals(grade_sheet, scored_items, unscorable_max_scores))
     return issues
 
 
