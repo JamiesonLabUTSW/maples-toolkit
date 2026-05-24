@@ -34,12 +34,12 @@ The Codex marketplace keeps placeholder plugins visible with `policy.installatio
 
 ## Install From This Marketplace
 
-Replace `<github-repo-url>` with the final public repository URL when this marketplace is published.
+Use the public marketplace repository URL when adding this marketplace.
 
 ### Codex CLI
 
 ```bash
-codex plugin marketplace add <github-repo-url>
+codex plugin marketplace add https://github.com/JamiesonLabUTSW/maples-toolkit
 codex plugin install rubric-maker-skill --source ut-real-project-maples
 ```
 
@@ -48,7 +48,7 @@ For local development, run Codex from this repository root. Codex can read the r
 ### Claude Code
 
 ```text
-/plugin marketplace add <github-repo-url>
+/plugin marketplace add https://github.com/JamiesonLabUTSW/maples-toolkit
 /plugin install rubric-maker-skill@ut-real-project-maples
 ```
 
