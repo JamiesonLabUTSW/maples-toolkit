@@ -21,11 +21,13 @@ rubric:
 
 - `Category`: Section or grouping for the item.
 - `QuestionName`: The specific task being assessed.
-- `ScoringLogic`: Ordered score anchors named `Score1`, `Score2`, etc. `Score1` is the lowest performance level.
+- `ScoringLogic`: Ordered score anchors named `Score1`, `Score2`, etc.
+  `Score1` is the lowest performance level.
 - `Mode`: Use `video`, `audio`, or `note`. For post-encounter-note rubrics, use `note`.
 - `Technique`: For note grading, describe the expected documentation evidence.
 - `Purpose`: Explain why the item matters clinically or educationally.
-- `AdditionalContext`: Add case-specific constraints, uncertainty, or evaluator guidance. Use an empty string if none.
+- `AdditionalContext`: Add case-specific constraints, uncertainty, or evaluator
+  guidance. Use an empty string if none.
 
 ## Constraints
 

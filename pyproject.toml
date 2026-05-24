@@ -1,0 +1,53 @@
+[project]
+name = "maples-toolkit"
+version = "0.1.0"
+description = "Codex CLI and Claude Code plugin marketplace for UT REAL Project MAPLES."
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "flowmark>=0.6.5",
+    "ruff>=0.15.14",
+    "ty>=0.0.39",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [
+    ".copilot-tracking",
+]
+
+[tool.ruff.lint]
+select = [
+    "B",
+    "C4",
+    "E4",
+    "E7",
+    "E9",
+    "F",
+    "I",
+    "UP",
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ty.environment]
+python-version = "3.12"
+python-platform = "all"
+root = ["."]
+
+[tool.ty.src]
+include = [
+    "scripts",
+    "plugins/rubric-maker-skill/scripts",
+    "plugins/rubric-maker-skill/skills",
+]
+exclude = [
+    ".copilot-tracking",
+]
+
+[tool.ty.terminal]
+output-format = "concise"

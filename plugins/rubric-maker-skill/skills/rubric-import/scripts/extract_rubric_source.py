@@ -12,9 +12,8 @@ import argparse
 import csv
 import html
 import sys
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
-
 
 SUPPORTED = {".docx", ".pdf", ".xlsx", ".xlsm", ".csv", ".tsv", ".txt", ".md"}
 

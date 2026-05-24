@@ -9,7 +9,6 @@ import sys
 import tempfile
 from pathlib import Path
 
-
 SCRIPT_DIR = Path(__file__).resolve().parent
 VALIDATOR = SCRIPT_DIR / "validate_grade_sheet.py"
 
@@ -283,7 +282,9 @@ def main() -> int:
         invalid_transcript_video = run_validator(invalid_transcript_video_path)
         if invalid_transcript_video.returncode == 0:
             raise RuntimeError("transcript-only video grade sheet unexpectedly passed validation")
-        transcript_video_output = f"{invalid_transcript_video.stdout}\n{invalid_transcript_video.stderr}"
+        transcript_video_output = (
+            f"{invalid_transcript_video.stdout}\n{invalid_transcript_video.stderr}"
+        )
         if "video" not in transcript_video_output or "observation" not in transcript_video_output:
             raise RuntimeError(
                 "transcript-only video grade sheet did not report video observation issue\n"
@@ -298,7 +299,9 @@ def main() -> int:
         output = f"{invalid.stdout}\n{invalid.stderr}"
         missing = [item for item in required if item not in output]
         if missing:
-            raise RuntimeError(f"invalid grade sheet did not report expected issues: {missing}\n{output}")
+            raise RuntimeError(
+                f"invalid grade sheet did not report expected issues: {missing}\n{output}"
+            )
         print("PASS invalid grade sheet")
 
     print("PASS grading-dry-run smoke test")

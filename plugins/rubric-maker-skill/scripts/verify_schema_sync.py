@@ -7,7 +7,6 @@ import argparse
 import sys
 from pathlib import Path
 
-
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_CANONICAL = REPO_ROOT / "references" / "rubric-schema.md"
 DEFAULT_SKILLS_DIR = REPO_ROOT / "skills"
@@ -74,13 +73,14 @@ def main() -> int:
         for error in errors:
             print(f"ERROR {error}", file=sys.stderr)
         print(
-            "Run: cp references/rubric-schema.md "
-            "skills/<skill-name>/references/rubric-schema.md",
+            "Run: cp references/rubric-schema.md skills/<skill-name>/references/rubric-schema.md",
             file=sys.stderr,
         )
         return 1
 
-    print(f"PASS schema sync: {checked} skill-local schema files match {canonical.relative_to(REPO_ROOT)}")
+    print(
+        f"PASS schema sync: {checked} skill-local schema files match {canonical.relative_to(REPO_ROOT)}"
+    )
     return 0
 
 

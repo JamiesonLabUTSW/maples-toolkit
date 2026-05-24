@@ -1,6 +1,7 @@
 # Built-In Student Artifact Templates
 
-Use these templates only as starting structures. Preserve user-supplied templates when provided.
+Use these templates only as starting structures.
+Preserve user-supplied templates when provided.
 
 ## Post-Encounter Note: SOAP
 
@@ -71,6 +72,8 @@ Transcript guidance:
 Observation-log guidance:
 
 - Use this only when a transcript has already been supplied or generated.
-- Derive each row from transcript text; do not invent visual findings or native media observations.
-- Use timestamps as approximate transcript-relative markers when exact timestamps are unavailable.
+- Derive each row from transcript text; do not invent visual findings or native media
+  observations.
+- Use timestamps as approximate transcript-relative markers when exact timestamps are
+  unavailable.
 - Keep rows concise and observable.

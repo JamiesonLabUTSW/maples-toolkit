@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-
 VALID_ARTIFACT_TYPES = {"note", "observation_log", "transcript"}
 REQUIRED_TOP_LEVEL_FIELDS = {"artifact_type", "artifact_text", "metadata"}
 OPTIONAL_TOP_LEVEL_FIELDS = {
@@ -72,9 +71,7 @@ def is_nonempty_string(value: Any) -> bool:
 
 def is_nonempty_string_list(value: Any) -> bool:
     return (
-        isinstance(value, list)
-        and bool(value)
-        and all(is_nonempty_string(item) for item in value)
+        isinstance(value, list) and bool(value) and all(is_nonempty_string(item) for item in value)
     )
 
 
@@ -126,12 +123,8 @@ def validate_metadata(metadata: Any) -> list[ValidationIssue]:
     if extra:
         issues.append(ValidationIssue("$.metadata", f"unexpected fields: {extra}"))
 
-    if "case_summary_used" in metadata and not is_nonempty_string(
-        metadata["case_summary_used"]
-    ):
-        issues.append(
-            ValidationIssue("$.metadata.case_summary_used", "must be a nonempty string")
-        )
+    if "case_summary_used" in metadata and not is_nonempty_string(metadata["case_summary_used"]):
+        issues.append(ValidationIssue("$.metadata.case_summary_used", "must be a nonempty string"))
 
     if "learner_profile" in metadata:
         issues.extend(validate_learner_profile(metadata["learner_profile"]))
@@ -146,7 +139,9 @@ def validate_metadata(metadata: Any) -> list[ValidationIssue]:
             )
 
     if "assumptions" in metadata:
-        issues.extend(validate_optional_string_list(metadata["assumptions"], "$.metadata.assumptions"))
+        issues.extend(
+            validate_optional_string_list(metadata["assumptions"], "$.metadata.assumptions")
+        )
 
     if "source_materials_summary" in metadata and not is_nonempty_string(
         metadata["source_materials_summary"]
@@ -228,9 +223,7 @@ def validate_artifact(data: Any) -> list[ValidationIssue]:
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Validate generated student artifact YAML/JSON."
-    )
+    parser = argparse.ArgumentParser(description="Validate generated student artifact YAML/JSON.")
     parser.add_argument(
         "inputs",
         nargs="+",

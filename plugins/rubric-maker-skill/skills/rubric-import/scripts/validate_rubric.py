@@ -11,7 +11,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-
 CORE_FIELDS = {"Category", "QuestionName", "ScoringLogic"}
 OPTIONAL_FIELDS = {"Mode", "Technique", "Purpose", "AdditionalContext"}
 ALLOWED_FIELDS = CORE_FIELDS | OPTIONAL_FIELDS
@@ -74,7 +73,9 @@ def validate_scoring(scoring: Any, row_path: str) -> list[ValidationIssue]:
     if not isinstance(scoring, dict):
         return [ValidationIssue(f"{row_path}.ScoringLogic", "must be an object")]
     if not scoring:
-        return [ValidationIssue(f"{row_path}.ScoringLogic", "must contain at least one ScoreN anchor")]
+        return [
+            ValidationIssue(f"{row_path}.ScoringLogic", "must contain at least one ScoreN anchor")
+        ]
 
     score_numbers: list[int] = []
     for key, value in scoring.items():
@@ -159,9 +160,7 @@ def validate_rubric(data: Any, schema: str = "plugin") -> list[ValidationIssue]:
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Validate Rubric Maker rubric YAML/JSON."
-    )
+    parser = argparse.ArgumentParser(description="Validate Rubric Maker rubric YAML/JSON.")
     parser.add_argument("inputs", nargs="+", help="Rubric YAML or JSON files to validate")
     parser.add_argument(
         "--schema",

@@ -11,7 +11,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-
 REQUIRED_FIELDS = {
     "location",
     "reasoning",
@@ -294,7 +293,10 @@ def validate_suggestion(
         elif finding_ids and finding_id not in finding_ids:
             issues.append(ValidationIssue(f"{path}.finding_id", "must reference a finding id"))
 
-    if item.get("failure_pattern") is not None and item.get("failure_pattern") not in VALID_PATTERNS:
+    if (
+        item.get("failure_pattern") is not None
+        and item.get("failure_pattern") not in VALID_PATTERNS
+    ):
         issues.append(
             ValidationIssue(
                 f"{path}.failure_pattern",

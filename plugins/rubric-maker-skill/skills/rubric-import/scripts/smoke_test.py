@@ -9,7 +9,6 @@ import sys
 import tempfile
 from pathlib import Path
 
-
 SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_DIR = SCRIPT_DIR.parent
 SAMPLE_RUBRIC = SKILL_DIR / "references" / "sample-rubric.yaml"
@@ -31,7 +30,9 @@ def run_command(args: list[str]) -> None:
         output = "\n".join(
             part for part in [completed.stdout.strip(), completed.stderr.strip()] if part
         )
-        raise RuntimeError(f"{' '.join(args)} failed with exit code {completed.returncode}\n{output}")
+        raise RuntimeError(
+            f"{' '.join(args)} failed with exit code {completed.returncode}\n{output}"
+        )
 
 
 def frontmatter(text: str) -> str:
@@ -68,14 +69,18 @@ def exercise_extractors(tmpdir: Path) -> list[str]:
         "Case summary: learner documents symptom timeline, prioritized differential, and initial plan.\n",
         encoding="utf-8",
     )
-    run_command([sys.executable, str(extractor), str(sample_text), "-o", str(tmpdir / "extracted-text.md")])
+    run_command(
+        [sys.executable, str(extractor), str(sample_text), "-o", str(tmpdir / "extracted-text.md")]
+    )
 
     sample_csv = tmpdir / "sample-source.csv"
     sample_csv.write_text(
         "Category,QuestionName,Mode\nHistory,Documents symptom timeline,note\n",
         encoding="utf-8",
     )
-    run_command([sys.executable, str(extractor), str(sample_csv), "-o", str(tmpdir / "extracted-csv.md")])
+    run_command(
+        [sys.executable, str(extractor), str(sample_csv), "-o", str(tmpdir / "extracted-csv.md")]
+    )
 
     return skipped
 
@@ -85,12 +90,16 @@ def exercise_renderers(tmpdir: Path) -> list[str]:
     renderer = SCRIPT_DIR / "render_rubric.py"
 
     if has_module("yaml") and has_module("openpyxl"):
-        run_command([sys.executable, str(renderer), str(SAMPLE_RUBRIC), "-o", str(tmpdir / "rubric.xlsx")])
+        run_command(
+            [sys.executable, str(renderer), str(SAMPLE_RUBRIC), "-o", str(tmpdir / "rubric.xlsx")]
+        )
     else:
         skipped.append("xlsx rendering requires PyYAML and openpyxl")
 
     if has_module("yaml") and has_module("docx"):
-        run_command([sys.executable, str(renderer), str(SAMPLE_RUBRIC), "-o", str(tmpdir / "rubric.docx")])
+        run_command(
+            [sys.executable, str(renderer), str(SAMPLE_RUBRIC), "-o", str(tmpdir / "rubric.docx")]
+        )
     else:
         skipped.append("docx rendering requires PyYAML and python-docx")
 
