@@ -1,0 +1,18 @@
+{
+  "name": "case-generation",
+  "version": "0.1.0",
+  "description": "Placeholder plugin for future OSCE case generation workflows from the UT REAL Project MAPLES research group.",
+  "author": {
+    "name": "UT REAL Project MAPLES",
+    "url": "https://ut-real-ai-project-maples.com/"
+  },
+  "homepage": "https://ut-real-ai-project-maples.com/",
+  "license": "LicenseRef-UTSW-Academic-Research-Only",
+  "keywords": [
+    "claude-code",
+    "skills",
+    "cases",
+    "osce",
+    "medical-education"
+  ]
+}

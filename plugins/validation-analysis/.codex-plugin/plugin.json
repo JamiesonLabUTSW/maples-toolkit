@@ -1,0 +1,33 @@
+{
+  "name": "validation-analysis",
+  "version": "0.1.0",
+  "description": "Placeholder plugin for future rubric and assessment validation analysis workflows from the UT REAL Project MAPLES research group.",
+  "author": {
+    "name": "UT REAL Project MAPLES",
+    "url": "https://ut-real-ai-project-maples.com/"
+  },
+  "homepage": "https://ut-real-ai-project-maples.com/",
+  "license": "LicenseRef-UTSW-Academic-Research-Only",
+  "keywords": [
+    "codex",
+    "skills",
+    "validation",
+    "analysis",
+    "medical-education"
+  ],
+  "interface": {
+    "displayName": "Validation Analysis",
+    "shortDescription": "Future validation analysis workflows",
+    "longDescription": "A placeholder Codex plugin reserved for future UT REAL Project MAPLES validation analysis skills and workflows.",
+    "developerName": "UT REAL Project MAPLES",
+    "category": "Education",
+    "websiteURL": "https://ut-real-ai-project-maples.com/",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Analyze rubric validation evidence."
+    ]
+  }
+}

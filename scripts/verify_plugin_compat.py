@@ -1,45 +1,31 @@
 #!/usr/bin/env python3
-"""Verify portable Agent Skills and dual plugin metadata invariants."""
+"""Verify marketplace metadata and the Rubric Maker plugin package."""
 
 from __future__ import annotations
 
 import json
-import re
+import subprocess
 import sys
 from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-SKILLS_DIR = REPO_ROOT / "skills"
-CANONICAL_SCHEMA = REPO_ROOT / "references" / "rubric-schema.md"
-SCHEMA_RELATIVE_PATH = Path("references") / "rubric-schema.md"
-CANONICAL_GRADE_SHEET_CONTRACT = REPO_ROOT / "references" / "grade-sheet-contract.md"
-CANONICAL_GRADE_SHEET_VALIDATOR = (
-    REPO_ROOT / "skills" / "grading-dry-run" / "scripts" / "validate_grade_sheet.py"
-)
-GRADE_SHEET_CONTRACT_RELATIVE_PATH = Path("references") / "grade-sheet-contract.md"
-GRADE_SHEET_VALIDATOR_RELATIVE_PATH = Path("scripts") / "validate_grade_sheet.py"
-NAME_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
-SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$")
-FORBIDDEN_UPSTREAM_PATTERNS = (
-    "/rubrics",
-    "rubrics-app",
-    "web app",
-    "source map",
-    "source-map",
-    "src/",
-    "prompts/",
-    "blueprints/",
-)
-PUBLISHED_ROOTS = (
-    "README.md",
-    "AGENTS.md",
-    "references",
-    "scripts",
-    "skills",
-    ".codex-plugin",
-    ".claude-plugin",
-)
+PLUGINS_DIR = REPO_ROOT / "plugins"
+RUBRIC_PLUGIN_ROOT = PLUGINS_DIR / "rubric-maker-skill"
+EXPECTED_PLUGINS = {
+    "rubric-maker-skill": {
+        "codex_installation": "AVAILABLE",
+        "description": "Skills for creating, importing, reviewing, transforming, dry-running, validating, and formatting OSCE rubrics.",
+    },
+    "case-generation": {
+        "codex_installation": "NOT_AVAILABLE",
+        "description": "Placeholder for future case generation workflows and skills.",
+    },
+    "validation-analysis": {
+        "codex_installation": "NOT_AVAILABLE",
+        "description": "Placeholder for future validation analysis workflows and skills.",
+    },
+}
 
 
 def rel(path: Path) -> str:
@@ -57,235 +43,119 @@ def load_json(path: Path, errors: list[str]) -> dict:
         return {}
 
 
-def frontmatter(path: Path, errors: list[str]) -> tuple[dict[str, str], str]:
-    text = path.read_text(encoding="utf-8")
-    lines = text.splitlines()
-    if not text.startswith("---\n"):
-        errors.append(f"{rel(path)} must start with YAML frontmatter")
-        return {}, text
-    try:
-        end = lines[1:].index("---") + 1
-    except ValueError:
-        errors.append(f"{rel(path)} is missing closing frontmatter delimiter")
-        return {}, text
-
-    metadata: dict[str, str] = {}
-    for raw_line in lines[1:end]:
-        if raw_line.startswith(" ") or ": " not in raw_line:
-            continue
-        key, value = raw_line.split(": ", 1)
-        metadata[key] = value.strip().strip('"')
-    return metadata, text
+def plugin_manifest(plugin_name: str, runtime: str, errors: list[str]) -> dict:
+    path = PLUGINS_DIR / plugin_name / f".{runtime}-plugin" / "plugin.json"
+    payload = load_json(path, errors)
+    if payload and payload.get("name") != plugin_name:
+        errors.append(f"{rel(path)} name must match plugin directory {plugin_name}")
+    return payload
 
 
-def validate_manifest(
-    path: Path,
-    manifest: dict,
-    errors: list[str],
-    *,
-    require_codex_paths: bool = False,
-) -> None:
-    name = str(manifest.get("name", ""))
-    version = str(manifest.get("version", ""))
-    description = str(manifest.get("description", ""))
-
-    if not NAME_RE.fullmatch(name) or "--" in name:
-        errors.append(f"{rel(path)} name must be kebab-case and 1-64 characters")
-    if not SEMVER_RE.fullmatch(version):
-        errors.append(f"{rel(path)} version must be semantic version format")
-    if not description:
-        errors.append(f"{rel(path)} must include a description")
-    if not manifest.get("license"):
-        errors.append(f"{rel(path)} must include license metadata")
-
-    author = manifest.get("author")
-    if not isinstance(author, dict) or not author.get("name"):
-        errors.append(f"{rel(path)} must include author.name")
-
-    if require_codex_paths:
-        skills = manifest.get("skills")
-        if skills != "./skills/":
-            errors.append(f"{rel(path)} skills must be ./skills/")
-        if isinstance(skills, str) and not skills.startswith("./"):
-            errors.append(f"{rel(path)} skills path must start with ./")
-        if not SKILLS_DIR.is_dir():
-            errors.append("missing skills directory")
-
-
-def validate_manifest_alignment(codex: dict, claude: dict, errors: list[str]) -> None:
-    for key in ("name", "version", "homepage", "license"):
-        if codex.get(key) != claude.get(key):
-            errors.append(f".codex-plugin/plugin.json and .claude-plugin/plugin.json disagree on {key}")
-
-    codex_author = codex.get("author", {})
-    claude_author = claude.get("author", {})
-    if isinstance(codex_author, dict) and isinstance(claude_author, dict):
-        if codex_author.get("name") != claude_author.get("name"):
-            errors.append(".codex-plugin/plugin.json and .claude-plugin/plugin.json disagree on author.name")
-
-
-def validate_skills(errors: list[str]) -> None:
-    skill_files = sorted(SKILLS_DIR.glob("*/SKILL.md"))
-    if not skill_files:
-        errors.append("no skill files found under skills/")
+def validate_codex_marketplace(errors: list[str]) -> None:
+    path = REPO_ROOT / ".agents" / "plugins" / "marketplace.json"
+    payload = load_json(path, errors)
+    if not payload:
         return
 
-    canonical_bytes = CANONICAL_SCHEMA.read_bytes() if CANONICAL_SCHEMA.is_file() else None
-    if canonical_bytes is None:
-        errors.append(f"missing canonical schema: {rel(CANONICAL_SCHEMA)}")
-    grade_sheet_contract_bytes = (
-        CANONICAL_GRADE_SHEET_CONTRACT.read_bytes()
-        if CANONICAL_GRADE_SHEET_CONTRACT.is_file()
-        else None
-    )
-    if grade_sheet_contract_bytes is None:
-        errors.append(
-            f"missing canonical grade-sheet contract: {rel(CANONICAL_GRADE_SHEET_CONTRACT)}"
-        )
-    grade_sheet_validator_bytes = (
-        CANONICAL_GRADE_SHEET_VALIDATOR.read_bytes()
-        if CANONICAL_GRADE_SHEET_VALIDATOR.is_file()
-        else None
-    )
-    if grade_sheet_validator_bytes is None:
-        errors.append(
-            f"missing canonical grade-sheet validator: {rel(CANONICAL_GRADE_SHEET_VALIDATOR)}"
-        )
+    if payload.get("name") != "ut-real-project-maples":
+        errors.append(f"{rel(path)} name must be ut-real-project-maples")
+    interface = payload.get("interface")
+    if not isinstance(interface, dict) or interface.get("displayName") != "UT REAL Project MAPLES":
+        errors.append(f"{rel(path)} interface.displayName must be UT REAL Project MAPLES")
 
-    for path in skill_files:
-        metadata, text = frontmatter(path, errors)
-        line_count = len(text.splitlines())
-        skill_dir = path.parent
-        name = metadata.get("name", "")
-        description = metadata.get("description", "")
-
-        if line_count > 500:
-            errors.append(f"{rel(path)} has {line_count} lines; keep SKILL.md under 500")
-        if name != skill_dir.name:
-            errors.append(f"{rel(path)} name must match parent directory {skill_dir.name}")
-        if not NAME_RE.fullmatch(name) or "--" in name:
-            errors.append(f"{rel(path)} name must be lowercase letters, numbers, and hyphens only")
-        if not (1 <= len(description) <= 1024):
-            errors.append(f"{rel(path)} description must be 1-1024 characters")
-        if "../" in text:
-            errors.append(f"{rel(path)} must not reference files outside the skill root")
-
-        schema_path = skill_dir / SCHEMA_RELATIVE_PATH
-        if not schema_path.is_file():
-            errors.append(f"missing {rel(schema_path)}")
-        elif canonical_bytes is not None and schema_path.read_bytes() != canonical_bytes:
-            errors.append(f"schema drift detected in {rel(schema_path)}")
-
-        grade_sheet_contract_path = skill_dir / GRADE_SHEET_CONTRACT_RELATIVE_PATH
-        grade_sheet_validator_path = skill_dir / GRADE_SHEET_VALIDATOR_RELATIVE_PATH
-        uses_grade_sheet_contract = grade_sheet_contract_path.is_file()
-        uses_grade_sheet_validator = grade_sheet_validator_path.is_file()
-        if uses_grade_sheet_contract:
-            if (
-                grade_sheet_contract_bytes is not None
-                and grade_sheet_contract_path.read_bytes() != grade_sheet_contract_bytes
-            ):
-                errors.append(
-                    f"grade-sheet contract drift detected in {rel(grade_sheet_contract_path)}"
-                )
-            if not uses_grade_sheet_validator:
-                errors.append(
-                    f"missing {rel(grade_sheet_validator_path)} for skill with grade-sheet contract"
-                )
-        if (
-            uses_grade_sheet_validator
-            and grade_sheet_validator_bytes is not None
-            and grade_sheet_validator_path.read_bytes() != grade_sheet_validator_bytes
-        ):
-            errors.append(
-                f"grade-sheet validator drift detected in {rel(grade_sheet_validator_path)}"
-            )
-
-
-def validate_packaging_hygiene(errors: list[str]) -> None:
-    ds_store_files = [
-        path
-        for path in REPO_ROOT.rglob(".DS_Store")
-        if ".git" not in path.relative_to(REPO_ROOT).parts
-    ]
-    for path in ds_store_files:
-        errors.append(f"OS metadata file must not be committed or packaged: {rel(path)}")
-
-    zip_files = [
-        path
-        for path in REPO_ROOT.rglob("*.zip")
-        if ".git" not in path.relative_to(REPO_ROOT).parts
-    ]
-    for path in zip_files:
-        errors.append(f"generated archive must not be committed or packaged: {rel(path)}")
-
-    pluginignore = REPO_ROOT / ".pluginignore"
-    if not pluginignore.is_file():
-        errors.append("missing .pluginignore")
+    entries = payload.get("plugins")
+    if not isinstance(entries, list):
+        errors.append(f"{rel(path)} plugins must be an array")
         return
-    pluginignore_text = pluginignore.read_text(encoding="utf-8")
-    for required in ("*.zip", ".DS_Store", "**/.DS_Store"):
-        if required not in pluginignore_text:
-            errors.append(f".pluginignore must exclude {required}")
+    by_name = {entry.get("name"): entry for entry in entries if isinstance(entry, dict)}
+    if set(by_name) != set(EXPECTED_PLUGINS):
+        errors.append(f"{rel(path)} plugins must be {sorted(EXPECTED_PLUGINS)}")
+        return
+
+    for plugin_name, expected in EXPECTED_PLUGINS.items():
+        entry = by_name[plugin_name]
+        source = entry.get("source")
+        if source != {"source": "local", "path": f"./plugins/{plugin_name}"}:
+            errors.append(f"{rel(path)} entry {plugin_name} has invalid source")
+        policy = entry.get("policy")
+        if not isinstance(policy, dict):
+            errors.append(f"{rel(path)} entry {plugin_name} policy must be an object")
+        else:
+            if policy.get("installation") != expected["codex_installation"]:
+                errors.append(
+                    f"{rel(path)} entry {plugin_name} policy.installation must be "
+                    f"{expected['codex_installation']}"
+                )
+            if policy.get("authentication") != "ON_INSTALL":
+                errors.append(f"{rel(path)} entry {plugin_name} policy.authentication must be ON_INSTALL")
+        if entry.get("category") != "Education":
+            errors.append(f"{rel(path)} entry {plugin_name} category must be Education")
+        if not (PLUGINS_DIR / plugin_name).is_dir():
+            errors.append(f"missing plugin directory plugins/{plugin_name}")
+        plugin_manifest(plugin_name, "codex", errors)
 
 
-def published_files() -> list[Path]:
-    files: list[Path] = []
-    for root_name in PUBLISHED_ROOTS:
-        root = REPO_ROOT / root_name
-        if root.is_file():
-            files.append(root)
-        elif root.is_dir():
-            files.extend(path for path in root.rglob("*") if path.is_file())
-    return sorted(files)
+def validate_claude_marketplace(errors: list[str]) -> None:
+    path = REPO_ROOT / ".claude-plugin" / "marketplace.json"
+    payload = load_json(path, errors)
+    if not payload:
+        return
+
+    if payload.get("name") != "ut-real-project-maples":
+        errors.append(f"{rel(path)} name must be ut-real-project-maples")
+    entries = payload.get("plugins")
+    if not isinstance(entries, list):
+        errors.append(f"{rel(path)} plugins must be an array")
+        return
+    by_name = {entry.get("name"): entry for entry in entries if isinstance(entry, dict)}
+    if set(by_name) != set(EXPECTED_PLUGINS):
+        errors.append(f"{rel(path)} plugins must be {sorted(EXPECTED_PLUGINS)}")
+        return
+
+    for plugin_name, expected in EXPECTED_PLUGINS.items():
+        entry = by_name[plugin_name]
+        if entry.get("source") != f"./plugins/{plugin_name}":
+            errors.append(f"{rel(path)} entry {plugin_name} source must be ./plugins/{plugin_name}")
+        if entry.get("description") != expected["description"]:
+            errors.append(f"{rel(path)} entry {plugin_name} description drifted")
+        plugin_manifest(plugin_name, "claude", errors)
 
 
-def validate_no_upstream_references(errors: list[str]) -> None:
-    for path in published_files():
-        relative = rel(path)
-        if path == Path(__file__).resolve():
-            continue
-        if path.suffix in {".pyc", ".zip"}:
-            continue
-        if any(part in {".git", "__pycache__"} for part in path.relative_to(REPO_ROOT).parts):
-            continue
+def validate_manifest_alignment(errors: list[str]) -> None:
+    for plugin_name in EXPECTED_PLUGINS:
+        codex = plugin_manifest(plugin_name, "codex", errors)
+        claude = plugin_manifest(plugin_name, "claude", errors)
+        for key in ("name", "version", "homepage", "license"):
+            if codex.get(key) != claude.get(key):
+                errors.append(f"plugin {plugin_name} Codex and Claude manifests disagree on {key}")
+        if codex.get("author", {}).get("name") != claude.get("author", {}).get("name"):
+            errors.append(f"plugin {plugin_name} Codex and Claude manifests disagree on author.name")
 
-        lowered_name = relative.lower()
-        for pattern in FORBIDDEN_UPSTREAM_PATTERNS:
-            if pattern in lowered_name:
-                errors.append(f"{relative} must not use unpublished upstream reference marker {pattern!r}")
 
-        try:
-            text = path.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            continue
-        lowered_text = text.lower()
-        for pattern in FORBIDDEN_UPSTREAM_PATTERNS:
-            if pattern in lowered_text:
-                errors.append(f"{relative} must not mention unpublished upstream reference marker {pattern!r}")
+def run_rubric_plugin_check() -> int:
+    return subprocess.run(
+        [sys.executable, str(RUBRIC_PLUGIN_ROOT / "scripts" / "verify_plugin_compat.py")],
+        cwd=RUBRIC_PLUGIN_ROOT,
+        check=False,
+    ).returncode
 
 
 def main() -> int:
     errors: list[str] = []
-
-    codex_path = REPO_ROOT / ".codex-plugin" / "plugin.json"
-    claude_path = REPO_ROOT / ".claude-plugin" / "plugin.json"
-    codex_manifest = load_json(codex_path, errors)
-    claude_manifest = load_json(claude_path, errors)
-
-    validate_manifest(codex_path, codex_manifest, errors, require_codex_paths=True)
-    validate_manifest(claude_path, claude_manifest, errors)
-    validate_manifest_alignment(codex_manifest, claude_manifest, errors)
-    validate_skills(errors)
-    validate_packaging_hygiene(errors)
-    validate_no_upstream_references(errors)
+    validate_codex_marketplace(errors)
+    validate_claude_marketplace(errors)
+    validate_manifest_alignment(errors)
 
     if errors:
         for error in errors:
             print(f"ERROR {error}", file=sys.stderr)
         return 1
 
-    print("PASS plugin compatibility: Agent Skills, Codex plugin, and Claude Code plugin invariants hold")
+    nested_status = run_rubric_plugin_check()
+    if nested_status != 0:
+        return nested_status
+
+    print("PASS marketplace compatibility: root marketplaces and plugin manifests are aligned")
     return 0
 
 

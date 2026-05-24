@@ -1,0 +1,33 @@
+{
+  "name": "case-generation",
+  "version": "0.1.0",
+  "description": "Placeholder plugin for future OSCE case generation workflows from the UT REAL Project MAPLES research group.",
+  "author": {
+    "name": "UT REAL Project MAPLES",
+    "url": "https://ut-real-ai-project-maples.com/"
+  },
+  "homepage": "https://ut-real-ai-project-maples.com/",
+  "license": "LicenseRef-UTSW-Academic-Research-Only",
+  "keywords": [
+    "codex",
+    "skills",
+    "cases",
+    "osce",
+    "medical-education"
+  ],
+  "interface": {
+    "displayName": "Case Generation",
+    "shortDescription": "Future OSCE case generation workflows",
+    "longDescription": "A placeholder Codex plugin reserved for future UT REAL Project MAPLES case generation skills and workflows.",
+    "developerName": "UT REAL Project MAPLES",
+    "category": "Education",
+    "websiteURL": "https://ut-real-ai-project-maples.com/",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Draft an OSCE case."
+    ]
+  }
+}

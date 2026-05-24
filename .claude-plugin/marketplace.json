@@ -1,0 +1,46 @@
+{
+  "name": "ut-real-project-maples",
+  "owner": {
+    "name": "UT REAL Project MAPLES",
+    "url": "https://ut-real-ai-project-maples.com/"
+  },
+  "metadata": {
+    "description": "Codex CLI and Claude Code plugins from the UT REAL Project MAPLES research group.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "rubric-maker-skill",
+      "source": "./plugins/rubric-maker-skill",
+      "description": "Skills for creating, importing, reviewing, transforming, dry-running, validating, and formatting OSCE rubrics.",
+      "version": "0.1.0",
+      "keywords": [
+        "rubrics",
+        "osce",
+        "medical-education"
+      ]
+    },
+    {
+      "name": "case-generation",
+      "source": "./plugins/case-generation",
+      "description": "Placeholder for future case generation workflows and skills.",
+      "version": "0.1.0",
+      "keywords": [
+        "cases",
+        "osce",
+        "medical-education"
+      ]
+    },
+    {
+      "name": "validation-analysis",
+      "source": "./plugins/validation-analysis",
+      "description": "Placeholder for future validation analysis workflows and skills.",
+      "version": "0.1.0",
+      "keywords": [
+        "validation",
+        "analysis",
+        "medical-education"
+      ]
+    }
+  ]
+}

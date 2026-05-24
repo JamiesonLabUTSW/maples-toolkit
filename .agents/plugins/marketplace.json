@@ -1,0 +1,44 @@
+{
+  "name": "ut-real-project-maples",
+  "interface": {
+    "displayName": "UT REAL Project MAPLES"
+  },
+  "plugins": [
+    {
+      "name": "rubric-maker-skill",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rubric-maker-skill"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Education"
+    },
+    {
+      "name": "case-generation",
+      "source": {
+        "source": "local",
+        "path": "./plugins/case-generation"
+      },
+      "policy": {
+        "installation": "NOT_AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Education"
+    },
+    {
+      "name": "validation-analysis",
+      "source": {
+        "source": "local",
+        "path": "./plugins/validation-analysis"
+      },
+      "policy": {
+        "installation": "NOT_AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Education"
+    }
+  ]
+}
