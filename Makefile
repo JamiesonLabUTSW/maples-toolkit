@@ -9,17 +9,25 @@ MARKDOWN_FIND := find . \( -path ./.git -o -path ./.copilot-tracking -o -path ./
 RUFF ?= $(shell if [ -x "$(VENV_BIN)/ruff" ]; then printf "$(VENV_BIN)/ruff"; else command -v ruff 2>/dev/null || printf ruff; fi)
 TY ?= $(shell if [ -x "$(VENV_BIN)/ty" ]; then printf "$(VENV_BIN)/ty"; else command -v ty 2>/dev/null || printf ty; fi)
 FLOWMARK ?= $(shell if [ -x "$(VENV_BIN)/flowmark" ]; then printf "$(VENV_BIN)/flowmark"; else command -v flowmark 2>/dev/null || printf flowmark; fi)
+PRE_COMMIT ?= $(shell if [ -x "$(VENV_BIN)/pre-commit" ]; then printf "$(VENV_BIN)/pre-commit"; else command -v pre-commit 2>/dev/null || printf pre-commit; fi)
 FLOWMARK_ARGS ?= --semantic --cleanups --width 88 --list-spacing preserve
 FLOWMARK_WRITE_ARGS ?= --inplace --nobackup $(FLOWMARK_ARGS)
 
-.PHONY: dev-install check format format-check lint ruff-lint ruff-format ruff-format-check typecheck ty-check flowmark-lint flowmark-format smoke
+.PHONY: dev-install pre-commit-install check python-check markdown-check format format-check lint ruff-lint ruff-format ruff-format-check typecheck ty-check flowmark-lint flowmark-format smoke marketplace-check schema-sync-check grade-sheet-sync-check plugin-smoke
 
 dev-install:
 	$(PYTHON) -m venv $(VENV)
 	$(VENV_BIN)/python -m pip install --upgrade pip
 	$(VENV_BIN)/python -m pip install --group dev
 
-check: lint format-check typecheck smoke
+pre-commit-install:
+	$(PRE_COMMIT) install
+
+check: python-check markdown-check typecheck smoke
+
+python-check: ruff-lint ruff-format-check
+
+markdown-check: flowmark-lint
 
 lint: ruff-lint flowmark-lint
 
@@ -62,7 +70,19 @@ flowmark-format:
 	done < <($(MARKDOWN_FIND))
 
 smoke:
+	$(MAKE) marketplace-check
+	$(MAKE) schema-sync-check
+	$(MAKE) grade-sheet-sync-check
+	$(MAKE) plugin-smoke
+
+marketplace-check:
 	python3 scripts/verify_plugin_compat.py
+
+schema-sync-check:
 	python3 scripts/verify_schema_sync.py
+
+grade-sheet-sync-check:
 	python3 scripts/verify_grade_sheet_schema_sync.py
+
+plugin-smoke:
 	python3 scripts/smoke_test.py

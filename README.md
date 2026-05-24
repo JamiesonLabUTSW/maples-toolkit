@@ -88,77 +88,10 @@ python3 -m pip install -r requirements.txt
 Future plugins should maintain their own `plugins/<plugin-name>/requirements.txt` when
 they ship Python scripts or other Python runtime dependencies.
 
-## Developer Tooling
+## Contributing
 
-Developer-only tooling is declared in the root `pyproject.toml` `dev` dependency group.
-This includes Ruff for Python linting/formatting, ty for type checking, and Flowmark for
-Markdown formatting.
-
-Install the development tools into a local virtual environment:
-
-```bash
-make dev-install
-```
-
-That target creates `.venv/`, upgrades pip inside it, and installs the root `dev`
-dependency group. The Makefile prefers tools from `.venv/bin/` and falls back to tools
-already on `PATH`. `uv` is not required; developers who already use it can still run
-equivalent commands with `uv run` or override Make variables such as
-`RUFF="uv run ruff"`.
-
-## Formatting And Checks
-
-Run the full local gate from the repository root:
-
-```bash
-make check
-```
-
-Common focused targets:
-
-```bash
-make lint
-make format-check
-make typecheck
-make format
-```
-
-`make format` runs Ruff formatting for Python and Flowmark formatting for Markdown.
-Do not run raw `flowmark --auto` in this repository.
-In current Flowmark versions, `--auto` also enables smart quotes and ellipsis
-conversion, which is too risky for Markdown files that document YAML, JSON, TOML, shell
-commands, and other exact syntax.
-Use the Makefile targets so Flowmark runs with the repository settings:
-`--semantic --cleanups --width 88 --list-spacing preserve`.
-
-## Validation
-
-Run the marketplace compatibility checks from the repository root:
-
-```bash
-python3 scripts/verify_plugin_compat.py
-python3 scripts/verify_schema_sync.py
-python3 scripts/verify_grade_sheet_schema_sync.py
-python3 scripts/smoke_test.py
-```
-
-These checks are also included in `make check`.
-
-Validate the Rubric Maker plugin package directly:
-
-```bash
-python3 /path/to/plugin-creator/scripts/validate_plugin.py plugins/rubric-maker-skill
-```
-
-Validate all Rubric Maker skills:
-
-```bash
-for d in plugins/rubric-maker-skill/skills/*/; do
-  if [ -f "$d/SKILL.md" ]; then
-    python3 /path/to/skill-creator/scripts/quick_validate.py "$d" || exit 1
-  fi
-done
-```
+Contributor setup, pre-commit hooks, CI checks, and validation commands are documented
+in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Reference Patterns
 
