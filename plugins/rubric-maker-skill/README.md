@@ -55,17 +55,17 @@ The plugin manifest uses `LicenseRef-UTSW-Academic-Research-Only` because this i
 
 ### Marketplace Install
 
-The public marketplace repository exposes this plugin from `plugins/rubric-maker-skill`. Replace `<github-repo-url>` with the final published repository URL:
+The public marketplace repository exposes this plugin from `plugins/rubric-maker-skill`:
 
 ```bash
-codex plugin marketplace add <github-repo-url>
+codex plugin marketplace add https://github.com/JamiesonLabUTSW/maples-toolkit
 codex plugin install rubric-maker-skill --source ut-real-project-maples
 ```
 
 For Claude Code:
 
 ```text
-/plugin marketplace add <github-repo-url>
+/plugin marketplace add https://github.com/JamiesonLabUTSW/maples-toolkit
 /plugin install rubric-maker-skill@ut-real-project-maples
 ```
 
