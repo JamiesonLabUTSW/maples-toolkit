@@ -92,6 +92,8 @@ they ship Python scripts or other Python runtime dependencies.
 
 Contributor setup, pre-commit hooks, CI checks, and validation commands are documented
 in [CONTRIBUTING.md](CONTRIBUTING.md).
+Versioning, changelog, tagging, and release procedures are documented in
+[CONTRIBUTING.md#versioning-and-releases](CONTRIBUTING.md#versioning-and-releases).
 
 ## Reference Patterns
 

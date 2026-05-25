@@ -1,0 +1,94 @@
+name: Changelog gate
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  changelog-gate:
+    name: Changelog gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Check changed paths
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          EVENT_PATH: ${{ github.event_path }}
+        run: |
+          python <<'PY'
+          import json
+          import os
+          import subprocess
+          import sys
+
+          event = json.loads(open(os.environ["EVENT_PATH"], encoding="utf-8").read())
+          labels = {label["name"] for label in event["pull_request"].get("labels", [])}
+          if "no-release" in labels:
+              print("no-release label present; changelog gate skipped")
+              raise SystemExit(0)
+
+          base_ref = os.environ["BASE_REF"]
+          subprocess.run(["git", "fetch", "origin", base_ref], check=True)
+          result = subprocess.run(
+              ["git", "diff", "--name-only", f"origin/{base_ref}...HEAD"],
+              check=True,
+              stdout=subprocess.PIPE,
+              text=True,
+          )
+          changed = set(result.stdout.splitlines())
+          failures = []
+
+          plugin_names = sorted(
+              path
+              for path in os.listdir("plugins")
+              if os.path.isdir(os.path.join("plugins", path))
+          )
+          for plugin_name in plugin_names:
+              prefix = f"plugins/{plugin_name}/"
+              if any(path.startswith(prefix) for path in changed):
+                  changelog = f"plugins/{plugin_name}/CHANGELOG.md"
+                  if changelog not in changed:
+                      failures.append(
+                          f"{changelog} must change when {prefix} changes, "
+                          "unless the PR has the no-release label"
+                      )
+
+          root_release_paths = (
+              ".agents/plugins/marketplace.json",
+              ".claude-plugin/marketplace.json",
+              ".github/pull_request_template.md",
+              "CONTRIBUTING.md",
+              "README.md",
+              ".changelog-template.md",
+          )
+          root_release_prefixes = ("scripts/", ".github/workflows/")
+          root_release_changed = any(path in root_release_paths for path in changed) or any(
+              path.startswith(prefix) for prefix in root_release_prefixes for path in changed
+          )
+          if root_release_changed and "CHANGELOG.md" not in changed:
+              failures.append(
+                  "CHANGELOG.md must change when marketplace metadata, release tooling, "
+                  "or release policy changes, unless the PR has the no-release label"
+              )
+
+          if failures:
+              for failure in failures:
+                  print(f"ERROR {failure}", file=sys.stderr)
+              raise SystemExit(1)
+
+          print("PASS changelog gate")
+          PY

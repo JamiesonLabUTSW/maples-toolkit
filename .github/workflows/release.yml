@@ -1,0 +1,88 @@
+name: Draft release
+
+on:
+  push:
+    tags:
+      - "marketplace/v*"
+      - "*/v*"
+
+permissions:
+  contents: read
+
+jobs:
+  draft-release:
+    name: Draft GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install developer tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --group dev
+      - name: Parse tag
+        id: tag
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          unit="${REF_NAME%/v*}"
+          version="${REF_NAME##*/v}"
+          echo "unit=$unit" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Run full check
+        run: make check
+      - name: Run release readiness
+        env:
+          RELEASE_UNIT: ${{ steps.tag.outputs.unit }}
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          if [ "$RELEASE_UNIT" = "marketplace" ]; then
+            python3 scripts/release_check.py --marketplace --version "$VERSION" --tag-state present --skip-make-check
+          else
+            python3 scripts/release_check.py --plugin "$RELEASE_UNIT" --version "$VERSION" --tag-state present --skip-make-check
+          fi
+      - name: Extract changelog notes
+        env:
+          RELEASE_UNIT: ${{ steps.tag.outputs.unit }}
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          python <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          unit = os.environ["RELEASE_UNIT"]
+          version = os.environ["VERSION"]
+          changelog = Path("CHANGELOG.md") if unit == "marketplace" else Path("plugins") / unit / "CHANGELOG.md"
+          text = changelog.read_text(encoding="utf-8")
+          pattern = re.compile(
+              rf"^## \[{re.escape(version)}\].*?\n(?P<body>.*?)(?=^## \[|\Z)",
+              re.MULTILINE | re.DOTALL,
+          )
+          match = pattern.search(text)
+          body = match.group("body").strip() if match else ""
+          if not body:
+              body = "Draft release created after validation. Add final notes before publishing."
+          Path("release-notes.md").write_text(body + "\n", encoding="utf-8")
+          PY
+      - name: Create draft GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ github.ref_name }}
+          RELEASE_UNIT: ${{ steps.tag.outputs.unit }}
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          gh release create "$TAG_NAME" \
+            --draft \
+            --title "$RELEASE_UNIT v$VERSION" \
+            --notes-file release-notes.md

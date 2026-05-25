@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -33,6 +34,11 @@ EXPECTED_AUTHOR = {
 EXPECTED_CLAUDE_OWNER = {
     "name": "UT REAL Project MAPLES",
 }
+SEMVER_RE = re.compile(
+    r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
+    r"(?:-((?:0|[1-9A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9A-Za-z-][0-9A-Za-z-]*))*))?"
+    r"(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$"
+)
 
 
 def rel(path: Path) -> str:
@@ -119,8 +125,9 @@ def validate_claude_marketplace(errors: list[str]) -> None:
         != "Codex CLI and Claude Code plugins from the UT REAL Project MAPLES research group."
     ):
         errors.append(f"{rel(path)} description drifted")
-    if payload.get("version") != "0.1.0":
-        errors.append(f"{rel(path)} version must be 0.1.0")
+    version = payload.get("version")
+    if not isinstance(version, str) or not SEMVER_RE.fullmatch(version):
+        errors.append(f"{rel(path)} version must be SemVer without a leading v")
     if payload.get("owner") != EXPECTED_CLAUDE_OWNER:
         errors.append(f"{rel(path)} owner drifted")
     if "metadata" in payload:
@@ -147,6 +154,10 @@ def validate_claude_marketplace(errors: list[str]) -> None:
             errors.append(f"{rel(path)} entry {plugin_name} category must be education")
         if entry.get("homepage") != EXPECTED_AUTHOR["url"]:
             errors.append(f"{rel(path)} entry {plugin_name} homepage drifted")
+        if "version" in entry:
+            errors.append(
+                f"{rel(path)} entry {plugin_name} must not duplicate plugin manifest version"
+            )
         plugin_manifest(plugin_name, "claude", errors)
 
 

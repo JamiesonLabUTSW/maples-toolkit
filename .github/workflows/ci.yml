@@ -84,3 +84,7 @@ jobs:
           python -m pip install --group dev
       - name: Run marketplace checks
         run: make smoke
+      - name: Run version checks
+        run: make version-check
+      - name: Run changelog checks
+        run: make changelog-check

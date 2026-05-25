@@ -13,7 +13,7 @@ PRE_COMMIT ?= $(shell if [ -x "$(VENV_BIN)/pre-commit" ]; then printf "$(VENV_BI
 FLOWMARK_ARGS ?= --semantic --cleanups --width 88 --list-spacing preserve
 FLOWMARK_WRITE_ARGS ?= --inplace --nobackup $(FLOWMARK_ARGS)
 
-.PHONY: dev-install pre-commit-install check python-check markdown-check format format-check lint ruff-lint ruff-format ruff-format-check typecheck ty-check flowmark-lint flowmark-format smoke marketplace-check schema-sync-check grade-sheet-sync-check plugin-smoke
+.PHONY: dev-install pre-commit-install check python-check markdown-check format format-check lint ruff-lint ruff-format ruff-format-check typecheck ty-check flowmark-lint flowmark-format smoke marketplace-check version-check changelog-check schema-sync-check grade-sheet-sync-check plugin-smoke release-check release-check-marketplace
 
 dev-install:
 	$(PYTHON) -m venv $(VENV)
@@ -71,12 +71,20 @@ flowmark-format:
 
 smoke:
 	$(MAKE) marketplace-check
+	$(MAKE) version-check
+	$(MAKE) changelog-check
 	$(MAKE) schema-sync-check
 	$(MAKE) grade-sheet-sync-check
 	$(MAKE) plugin-smoke
 
 marketplace-check:
 	python3 scripts/verify_plugin_compat.py
+
+version-check:
+	python3 scripts/verify_versions.py
+
+changelog-check:
+	python3 scripts/verify_changelog.py
 
 schema-sync-check:
 	python3 scripts/verify_schema_sync.py
@@ -86,3 +94,9 @@ grade-sheet-sync-check:
 
 plugin-smoke:
 	python3 scripts/smoke_test.py
+
+release-check:
+	python3 scripts/release_check.py --plugin "$(PLUGIN)" --version "$(VERSION)"
+
+release-check-marketplace:
+	python3 scripts/release_check.py --marketplace --version "$(VERSION)"
