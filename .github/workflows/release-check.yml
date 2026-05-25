@@ -1,0 +1,53 @@
+name: Release check
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_unit:
+        description: Release unit
+        required: true
+        type: choice
+        options:
+          - marketplace
+          - rubric-maker-skill
+          - case-generation
+          - validation-analysis
+      version:
+        description: SemVer version without v prefix
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  release-check:
+    name: Release check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install developer tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --group dev
+      - name: Run full check
+        run: make check
+      - name: Run release readiness
+        env:
+          RELEASE_UNIT: ${{ inputs.release_unit }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$RELEASE_UNIT" = "marketplace" ]; then
+            python3 scripts/release_check.py --marketplace --version "$VERSION" --skip-make-check
+          else
+            python3 scripts/release_check.py --plugin "$RELEASE_UNIT" --version "$VERSION" --skip-make-check
+          fi
