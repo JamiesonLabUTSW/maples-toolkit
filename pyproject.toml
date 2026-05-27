@@ -7,7 +7,7 @@ dependencies = []
 
 [dependency-groups]
 dev = [
-    "flowmark>=0.6.5",
+    "flowmark==0.6.5",
     "pre-commit>=4.6.0",
     "ruff>=0.15.14",
     "ty>=0.0.39",
