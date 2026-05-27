@@ -75,21 +75,21 @@ The public marketplace repository exposes this plugin from `plugins/rubric-maker
 
 ```bash
 codex plugin marketplace add https://github.com/JamiesonLabUTSW/maples-toolkit
-codex plugin install rubric-maker-skill --source ut-real-project-maples
+codex plugin add rubric-maker-skill@ut-real-project-maples
 ```
 
 For Claude Code:
 
-```text
-/plugin marketplace add https://github.com/JamiesonLabUTSW/maples-toolkit
-/plugin install rubric-maker-skill@ut-real-project-maples
+```bash
+claude plugin marketplace add https://github.com/JamiesonLabUTSW/maples-toolkit
+claude plugin install rubric-maker-skill@ut-real-project-maples
 ```
 
 For local Claude Code development, load this plugin directory directly from the
 marketplace checkout:
 
 ```bash
-cc --plugin-dir plugins/rubric-maker-skill
+claude --plugin-dir plugins/rubric-maker-skill
 ```
 
 For Codex local development, run Codex from the marketplace root so it can read
