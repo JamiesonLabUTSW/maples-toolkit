@@ -1,17 +1,17 @@
 ---
 name: generate-rubric-zeroshot-audio
-description: Draft new note-only generic rubrics from case presented by the user with additional optional uploaded reference materials. Use when an agent needs to synthesize user-provided case materials into Rubric Maker app-compatible note-mode YAML file which is then uploaded straight to OASIS. Do not use for generating OSCE-specific rubrics, importing existing rubrics, transforming or reviewing existing rubrics, generating sample student artifacts, dry-run grading, or live simulation case design.
+description: Draft new audio-only generic rubrics from case presented by the user with additional optional uploaded reference materials. Use when an agent needs to synthesize user-provided case materials into Rubric Maker app-compatible audio-mode YAML file which is then uploaded straight to OASIS. Do not use for generating note-only or video-only rubrics, importing existing rubrics, transforming or reviewing existing rubrics, generating sample student artifacts, dry-run grading, or live simulation case design.
 ---
-# Generate Rubric Zero-Shot
+# Generate Rubric Zero-Shot Audio
 
 ## Overview
 
 Create a draft generic rubric from case materials.
-The output must be a note-only Rubric Maker rubric that can feed downstream note-grading
+The output must be an audio-only Rubric Maker rubric that can feed downstream audio-grading
 workflows. Each rubric item has `Category`, `QuestionName`, `ScoringLogic`, `Mode`,
 `Technique`, `Purpose`, and `AdditionalContext`.
 
-Use `Mode: note` for every item.
+Use `Mode: audio` for every item.
 
 ## Required YAML Shape
 
@@ -34,8 +34,8 @@ rubric:
       Score1: Lowest performance description.
       Score2: Middle performance description.
       Score3: Highest performance description.
-    Mode: note
-    Technique: Exact written-note evidence to look for.
+    Mode: audio
+    Technique: Exact spoken, paralinguistic, or interactional evidence to listen for.
     Purpose: Educational or technical rationale.
     AdditionalContext: Acceptable alternatives, constraints, or grading cautions.
 ```
@@ -46,12 +46,14 @@ lowest to highest. Never start at `Score0`.
 
 ## Use For
 
-- Drafting a new note-only rubric from user-provided materials.
-- Converting case expectations into written-note assessment items.
-- Producing Rubric Maker app-compatible note-mode YAML from simple user prompts with additional case materials if provided.
+- Drafting a new audio-only rubric from user-provided materials.
+- Converting case expectations into spoken communication, clinical reasoning, and interaction assessment items.
+- Producing Rubric Maker app-compatible audio-mode YAML from simple user prompts with additional case materials if provided.
 
 ## Do Not Use For
 
+- Generating note-only rubrics; use `generate-rubric-zeroshot` instead.
+- Generating video-only rubrics; use `generate-rubric-zeroshot-video` instead.
 - Generating OSCE-specific rubrics with `Mode: osce` or `Mode: virtual-patient-simulation`;
   use `post-encounter-note-rubric` instead.
 - Importing or preserving an existing rubric, table, CSV/XLSX extract, checklist, or
@@ -62,7 +64,7 @@ lowest to highest. Never start at `Score0`.
   in an existing rubric; use `osce-rubric-transform`.
 - Validating a disputed concern, proposed fix, clinical-validity question, severity, or
   consensus recommendation; use `content-validation`.
-- Generating synthetic student notes or transcripts for rubric testing; use
+- Generating synthetic student notes, audio transcripts, or artifacts for rubric testing; use
   `generate-student-artifact`.
 - Dry-run grading a student artifact against a rubric or producing a trial grade sheet;
   use `grading-dry-run`.
@@ -72,8 +74,10 @@ lowest to highest. Never start at `Score0`.
 
 ## Sibling Sequence
 
-Use `generate-rubric-zeroshot` when the starting point is generic user prompt and the
-desired output is a new written-note rubric.
+Use `generate-rubric-zeroshot-audio` when the starting point is a generic user prompt and the
+desired output is a new audio-mode rubric.
+Use `generate-rubric-zeroshot` for written-note rubrics and
+`generate-rubric-zeroshot-video` for video-observation rubrics.
 After drafting, use `osce-rubric-review` for a broad quality audit, `osce-rubric-transform` for requested rewrites or score-scale changes, `grading-dry-run` to produce a trial grade sheet, and `evaluate-dry-run` to turn dry-run friction into rubric improvement suggestions.
 
 ## Workflow
@@ -90,14 +94,14 @@ After drafting, use `osce-rubric-review` for a broad quality audit, `osce-rubric
    Keep items single-purpose and evidence-based.
 5. Write scoring levels from lowest to highest as `Score1`, `Score2`, etc.
    Use 3-5 levels by default.
-   Make each level independently scorable from the note text.
-6. Include `Technique` as the exact written-note evidence the grader should look for.
+   Make each level independently scorable from the audio recording or transcript.
+6. Include `Technique` as the exact audio evidence the grader should listen for.
    Include `Purpose` as the educational or technical rationale.
    Use `AdditionalContext` for case-specific constraints, acceptable alternatives,
-   uncertainty, and downstream grading cautions.
+   uncertainty, transcript-quality limitations, and downstream grading cautions.
 7. Produce the rubric as YAML by default; produce JSON only if the user explicitly asks.
 8. Upload the rubric directly to OASIS by calling `upload_rubric` with the YAML body
-   passed as `content` and a `filename` like `<rubric-name>.yaml`. Use `Mode: note`.
+   passed as `content` and a `filename` like `<rubric-name>.yaml`. Use `Mode: audio`.
    Do not write the rubric to disk first — passing `content` avoids creating and then
    cleaning up a temporary file.
 9. If the upload fails, analyze and compare the generated rubric to the required YAML shape
@@ -106,10 +110,15 @@ After drafting, use `osce-rubric-review` for a broad quality audit, `osce-rubric
 
 ## Quality Rules
 
-- Grade only what can be found in the written note; avoid criteria that require knowing
-  what happened in the encounter unless the note documents it.
-- Prefer concrete evidence: named symptoms, pertinent negatives, clinical reasoning,
-  prioritized differential, justified plan, follow-up, return precautions.
+- Grade only what can be heard in the audio recording or reliably represented in an
+  audio transcript; avoid criteria that require visual observation or written-note content.
+- Prefer concrete evidence: spoken questions, explanations, clinical reasoning,
+  patient-centered language, teach-back, summaries, follow-up, return precautions,
+  and verbal handling of safety-critical concerns.
+- Include communication behaviors that are audio-scorable, such as organization,
+  signposting, empathy statements, interruptions, closed-loop confirmation, and
+  respectful tone. Avoid visual-only behaviors such as eye contact, posture, gestures,
+  or physical-exam technique unless they are explicitly verbalized in the audio.
 - Avoid double-barrel items.
   Split separate skills into separate rubric rows.
 - Include safety-critical omissions when the case has clear red flags, medication risks,

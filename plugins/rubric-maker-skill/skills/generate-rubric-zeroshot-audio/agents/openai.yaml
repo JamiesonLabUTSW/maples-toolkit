@@ -1,4 +1,4 @@
 interface:
-  display_name: "Generate Rubric (Zero-Shot)"
-  short_description: "Draft note-only rubrics from user-provided scenarios."
-  default_prompt: "Use $generate-rubric-zeroshot to create new note-only generic rubrics based on the use case presented by the user."
+  display_name: "Generate Audio Rubric (Zero-Shot)"
+  short_description: "Draft audio-only rubrics from user-provided scenarios."
+  default_prompt: "Use $generate-rubric-zeroshot-audio to create new audio-only generic rubrics based on the use case presented by the user."
