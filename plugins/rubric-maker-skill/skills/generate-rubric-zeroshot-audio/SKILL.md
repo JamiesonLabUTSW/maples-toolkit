@@ -1,5 +1,5 @@
 ---
-name: generate-rubric-zeroshot
+name: generate-rubric-zeroshot-audio
 description: Draft new note-only generic rubrics from case presented by the user with additional optional uploaded reference materials. Use when an agent needs to synthesize user-provided case materials into Rubric Maker app-compatible note-mode YAML file which is then uploaded straight to OASIS. Do not use for generating OSCE-specific rubrics, importing existing rubrics, transforming or reviewing existing rubrics, generating sample student artifacts, dry-run grading, or live simulation case design.
 ---
 # Generate Rubric Zero-Shot
