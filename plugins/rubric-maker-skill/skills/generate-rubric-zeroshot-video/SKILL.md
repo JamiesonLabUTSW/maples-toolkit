@@ -7,18 +7,19 @@ description: Draft new video-only generic rubrics from case presented by the use
 ## Overview
 
 Create a draft generic rubric from case materials.
-The output must be a video-only Rubric Maker rubric that can feed downstream video-grading
-workflows. Each rubric item has `Category`, `QuestionName`, `ScoringLogic`, `Mode`,
-`Technique`, `Purpose`, and `AdditionalContext`.
+The output must be a video-only Rubric Maker rubric that can feed downstream
+video-grading workflows.
+Each rubric item has `Category`, `QuestionName`, `ScoringLogic`, `Mode`, `Technique`,
+`Purpose`, and `AdditionalContext`.
 
 Use `Mode: video` for every item.
 
 ## Required YAML Shape
 
-Use the row-oriented YAML shape below exactly. Do not nest items under `cases`,
-`activities`, or `items`. Do not use fields such as `rubric_name`,
-`rubric_description`, `modalities`, `case_name`, `activity_name`, `item_key`,
-`question_text`, `max_rating`, or numeric scoring keys.
+Use the row-oriented YAML shape below exactly.
+Do not nest items under `cases`, `activities`, or `items`. Do not use fields such as
+`rubric_name`, `rubric_description`, `modalities`, `case_name`, `activity_name`,
+`item_key`, `question_text`, `max_rating`, or numeric scoring keys.
 
 ```yaml
 name: example-rubric
@@ -40,22 +41,25 @@ rubric:
     AdditionalContext: Acceptable alternatives, constraints, or grading cautions.
 ```
 
-`rubric` must be a non-empty list. Every list entry must be a flat item mapping.
+`rubric` must be a non-empty list.
+Every list entry must be a flat item mapping.
 `ScoringLogic` must use sequential keys from `Score1` through `ScoreN`, ordered from
 lowest to highest. Never start at `Score0`.
 
 ## Use For
 
 - Drafting a new video-only rubric from user-provided materials.
-- Converting case expectations into observable performance, physical-exam, procedural, and interaction assessment items.
-- Producing Rubric Maker app-compatible video-mode YAML from simple user prompts with additional case materials if provided.
+- Converting case expectations into observable performance, physical-exam, procedural,
+  and interaction assessment items.
+- Producing Rubric Maker app-compatible video-mode YAML from simple user prompts with
+  additional case materials if provided.
 
 ## Do Not Use For
 
 - Generating note-only rubrics; use `generate-rubric-zeroshot` instead.
 - Generating audio-only rubrics; use `generate-rubric-zeroshot-audio` instead.
-- Generating OSCE-specific rubrics with `Mode: osce` or `Mode: virtual-patient-simulation`;
-  use `post-encounter-note-rubric` instead.
+- Generating OSCE-specific rubrics with `Mode: osce` or
+  `Mode: virtual-patient-simulation`; use `post-encounter-note-rubric` instead.
 - Importing or preserving an existing rubric, table, CSV/XLSX extract, checklist, or
   prose scoring guide as-is; use `rubric-import`.
 - Reviewing an existing rubric for quality, safety, objectivity, missing fields, or
@@ -64,8 +68,8 @@ lowest to highest. Never start at `Score0`.
   in an existing rubric; use `osce-rubric-transform`.
 - Validating a disputed concern, proposed fix, clinical-validity question, severity, or
   consensus recommendation; use `content-validation`.
-- Generating synthetic student notes, transcripts, videos, or artifacts for rubric testing; use
-  `generate-student-artifact`.
+- Generating synthetic student notes, transcripts, videos, or artifacts for rubric
+  testing; use `generate-student-artifact`.
 - Dry-run grading a student artifact against a rubric or producing a trial grade sheet;
   use `grading-dry-run`.
 - Analyzing a trial grade sheet to identify rubric improvements; use `evaluate-dry-run`.
@@ -74,22 +78,26 @@ lowest to highest. Never start at `Score0`.
 
 ## Sibling Sequence
 
-Use `generate-rubric-zeroshot-video` when the starting point is a generic user prompt and the
-desired output is a new video-mode rubric.
+Use `generate-rubric-zeroshot-video` when the starting point is a generic user prompt
+and the desired output is a new video-mode rubric.
 Use `generate-rubric-zeroshot` for written-note rubrics and
 `generate-rubric-zeroshot-audio` for audio rubrics.
-After drafting, use `osce-rubric-review` for a broad quality audit, `osce-rubric-transform` for requested rewrites or score-scale changes, `grading-dry-run` to produce a trial grade sheet, and `evaluate-dry-run` to turn dry-run friction into rubric improvement suggestions.
+After drafting, use `osce-rubric-review` for a broad quality audit,
+`osce-rubric-transform` for requested rewrites or score-scale changes, `grading-dry-run`
+to produce a trial grade sheet, and `evaluate-dry-run` to turn dry-run friction into
+rubric improvement suggestions.
 
 ## Workflow
 
 1. Load `references/MAPLES Rubric Specification.md` before drafting.
 2. Read the provided scenario.
-3. DO NOT ask clarifying questions. Draft the rubric from whatever the user provides,
-   even if the materials are sparse or ambiguous. Make conservative assumptions about
-   rubric structure, item count, learner level, and scoring granularity, and list those
-   assumptions in a short preamble before the rubric. Do not invent scenario case facts —
-   if a fact is uncertain, capture that uncertainty in `AdditionalContext` on the
-   affected item rather than pausing to ask the user.
+3. DO NOT ask clarifying questions.
+   Draft the rubric from whatever the user provides, even if the materials are sparse or
+   ambiguous. Make conservative assumptions about rubric structure, item count, learner
+   level, and scoring granularity, and list those assumptions in a short preamble before
+   the rubric. Do not invent scenario case facts — if a fact is uncertain, capture that
+   uncertainty in `AdditionalContext` on the affected item rather than pausing to ask
+   the user.
 4. Create 8-15 rubric items unless the user requests a different size.
    Keep items single-purpose and evidence-based.
 5. Write scoring levels from lowest to highest as `Score1`, `Score2`, etc.
@@ -102,12 +110,12 @@ After drafting, use `osce-rubric-review` for a broad quality audit, `osce-rubric
    uncertainty, camera-angle or visibility limitations, and downstream grading cautions.
 7. Produce the rubric as YAML by default; produce JSON only if the user explicitly asks.
 8. Upload the rubric directly to OASIS by calling `upload_rubric` with the YAML body
-   passed as `content` and a `filename` like `<rubric-name>.yaml`. Use `Mode: video`.
-   Do not write the rubric to disk first — passing `content` avoids creating and then
+   passed as `content` and a `filename` like `<rubric-name>.yaml`. Use `Mode: video`. Do
+   not write the rubric to disk first — passing `content` avoids creating and then
    cleaning up a temporary file.
-9. If the upload fails, analyze and compare the generated rubric to the required YAML shape
-   and examples in references/ two more time. If it fails after the third attempt,
-   return an error instead of continuing.
+9. If the upload fails, analyze and compare the generated rubric to the required YAML
+   shape and examples in references/ two more time.
+   If it fails after the third attempt, return an error instead of continuing.
 
 ## Quality Rules
 
@@ -119,8 +127,9 @@ After drafting, use `osce-rubric-review` for a broad quality audit, `osce-rubric
   task sequencing, and visible response to patient cues.
 - Include communication behaviors only when they are video-scorable, such as respectful
   positioning, attention to the patient, visible teach-back setup, or closed-loop
-  confirmation gestures. Avoid criteria that depend solely on transcript wording,
-  tone, or spoken content unless the video evidence directly supports them.
+  confirmation gestures.
+  Avoid criteria that depend solely on transcript wording, tone, or spoken content
+  unless the video evidence directly supports them.
 - Avoid double-barrel items.
   Split separate skills into separate rubric rows.
 - Include safety-critical omissions when the case has clear red flags, medication risks,
@@ -134,6 +143,6 @@ After drafting, use `osce-rubric-review` for a broad quality audit, `osce-rubric
 
 ## References
 
-- Load `references/BloodPressure_OSCE.fixed.xlsx` for a sample rubric source scenario 
-- Load `references/MAPLES Rubric Specification.md` for the rubric item field definitions and quality rules.
-- Load `../../../../../mcp/tools/rubric.py` for the `upload_rubric` tool to upload the output rubric to OASIS.
+- Load `references/BloodPressure_OSCE.fixed.xlsx` for a sample rubric source scenario.
+- Load `references/MAPLES Rubric Specification.md` for the rubric item field definitions
+  and quality rules.

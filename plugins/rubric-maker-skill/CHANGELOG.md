@@ -9,6 +9,9 @@ Versioning.
 
 ### Added
 
+- Added note-only, audio-only, video-only, and multimodal zero-shot rubric generation
+  skills for Wayfinder/OASIS rubric upload workflows.
+
 ### Changed
 
 ### Deprecated
@@ -19,7 +22,7 @@ Versioning.
 
 ### Security
 
-## [0.1.0] - 2026-05-24
+## [0.1.0][rubric-maker-skill-v0.1.0] - 2026-05-24
 
 ### Added
 
@@ -54,4 +57,4 @@ Versioning.
   local environments, logs, and generated outputs.
 
 [unreleased]: https://github.com/JamiesonLabUTSW/maples-toolkit/compare/rubric-maker-skill/v0.1.0...HEAD
-[0.1.0]: https://github.com/JamiesonLabUTSW/maples-toolkit/releases/tag/rubric-maker-skill/v0.1.0
+[rubric-maker-skill-v0.1.0]: https://github.com/JamiesonLabUTSW/maples-toolkit/releases/tag/rubric-maker-skill/v0.1.0
