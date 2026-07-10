@@ -83,7 +83,7 @@ rubric improvement suggestions.
 
 ## Workflow
 
-1. Load `references/MAPLES Rubric Specification.md` before drafting.
+1. Load `references/rubric-maker-yaml-to-maples-mapping.md` before drafting.
 2. Read the provided scenario.
 3. DO NOT ask clarifying questions.
    Draft the rubric from whatever the user provides, even if the materials are sparse or
@@ -107,7 +107,7 @@ rubric improvement suggestions.
    not write the rubric to disk first — passing `content` avoids creating and then
    cleaning up a temporary file.
 9. If the upload fails, analyze and compare the generated rubric to the required YAML
-   shape and examples in references/ two more time.
+   shape and examples in references/ two more times.
    If it fails after the third attempt, return an error instead of continuing.
 
 ## Quality Rules
@@ -130,5 +130,5 @@ rubric improvement suggestions.
 ## References
 
 - Load `references/BloodPressure_OSCE.fixed.xlsx` for a sample rubric source scenario.
-- Load `references/MAPLES Rubric Specification.md` for the rubric item field definitions
-  and quality rules.
+- Load `references/rubric-maker-yaml-to-maples-mapping.md` for the rubric item field
+  definitions and quality rules.

@@ -20,6 +20,11 @@ Versioning.
 
 ### Fixed
 
+- Renamed zero-shot vendored mapping docs from the platform-spec name
+  (`MAPLES Rubric Specification.md`) to `rubric-maker-yaml-to-maples-mapping.md` so
+  agents load the toolkit YAML→MAPLES adapter, not a false canonical workbook contract
+  (issue #13).
+
 ### Security
 
 ## [0.1.0][rubric-maker-skill-v0.1.0] - 2026-05-24
